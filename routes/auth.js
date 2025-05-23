@@ -9,15 +9,15 @@ authRouter.post('/signup',async(req,res)=>{
  const {emailId,name,password,role}=req.body;
 
         if (!emailId) {
-     return  res.status(201).json({success: false,message:"Emailid is required"})
+     return  res.status(400).json({success: false,message:"Emailid is required"})
     }
     if (!password) {
-     return res.status(201).json({success: false,message:"Password is required"});
+     return res.status(400).json({success: false,message:"Password is required"});
     }
     
    const userExist=await User.findOne({emailId});
    if(userExist){
-    return  res.status(201).json({
+    return  res.status(404).json({
          success:false ,
          message:"User Already exist please login"
       })
@@ -47,7 +47,7 @@ authRouter.post('/signup',async(req,res)=>{
    })
    }
    catch(err){
-   res.status(400).json({
+   res.status(500).json({
       success:false,
       message:'user registeration fail' + err,
    })
@@ -60,15 +60,15 @@ authRouter.post('/login',async(req,res)=>{
   try {
      const {emailId,password}=req.body;
         if (!emailId) {
-     return  res.status(201).json({success: false,message:"Emailid is required"})
+     return  res.status(400).json({success: false,message:"Emailid is required"})
     }
     if (!password) {
-     return res.status(201).json({success: false,message:"Password is required"});
+     return res.status(400).json({success: false,message:"Password is required"});
     }
     
     const userExist=await User.findOne({emailId});
     if(!userExist){
-      res.status(201).json({
+      res.status(404).json({
          success:false,
          message:" Please signup "
       })
@@ -79,7 +79,7 @@ authRouter.post('/login',async(req,res)=>{
     const comparePassword=await bcrypt.compare(password,hashPassword);
     
     if(!comparePassword){
-    return  res.status(201).json({
+    return  res.status(404).json({
          success:false,
          message:"Invalid credentials"
       })
@@ -104,7 +104,7 @@ authRouter.post('/login',async(req,res)=>{
          userExist
     })
   } catch (error) {
-      res.status(400).json({
+      res.status(500).json({
       success:false,
       message:"login fail" +error
     })

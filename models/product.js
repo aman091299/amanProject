@@ -7,6 +7,13 @@ const productSchema = mongoose.Schema({
     unique: true,
     trim: true,
   },
+    slug: {
+    type: String,
+    required: true,
+    unique: true,
+    trim: true,
+  },
+
   description: {
     type: String,
     required: true,
@@ -72,17 +79,17 @@ const productSchema = mongoose.Schema({
      
   }],default:[],
 
-  cookingTime: {
-   minTime:{ type:Number,
-      trim: true,
-     },
-      maxTime:{
-        type:Number,
-      trim: true,
+  // cookingTime: {
+  //  minTime:{ type:Number,
+  //     trim: true,
+  //    },
+  //     maxTime:{
+  //       type:Number,
+  //     trim: true,
 
-      }
+  //     }
      
-  },
+  // },
 
   bestSuitedFor: [ {
     type: String,
@@ -96,14 +103,13 @@ const productSchema = mongoose.Schema({
     trim: true,
     lowercase:true,
   },
-
-  cutType: [ {
+cuts: [ {
     type: String,
       trim: true,
       lowercase:true,
   }],default:[],
 
-});
+},{timestamps:true} );
 const Product = mongoose.model("Product", productSchema);
 
 module.exports = Product;

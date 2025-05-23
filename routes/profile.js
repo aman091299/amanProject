@@ -10,7 +10,7 @@ profileRouter.get("/profile/view", userAuth,async (req, res) => {
     const userExist = await User.findOne({ emailId });
 
     if (!userExist) {
-      res.status(201).json({
+      res.status(404).json({
         success: false,
         message: "user does not exist ",
       });
@@ -22,7 +22,7 @@ profileRouter.get("/profile/view", userAuth,async (req, res) => {
       message: "Profile view successfully",
     });
   } catch (error) {
-    res.status(400).json({
+    res.status(500).json({
       success: false,
       message: "profile viewing fail" + error,
     });
@@ -34,11 +34,11 @@ profileRouter.patch('/profile/edit',userAuth,async(req,res)=>{
         const user=req.user;
     const {name}=req.body;
      if (!name) {
-     return  res.status(201).json({success: false,message:"name is required"})
+     return  res.status(400).json({success: false,message:"name is required"})
     }
     const userExist=await User.findById(user._id);
      if (!userExist) {
-      res.status(201).json({
+      res.status(404).json({
         success: false,
         message: "user does not exist ",
       });

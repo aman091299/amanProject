@@ -6,6 +6,14 @@ const categorySchema=mongoose.Schema({
         required:true,
         unique:true,
         trim:true,
+        lowercase:true,
+    },
+    slug:{
+   type:String,
+        required:true,
+        unique:true,
+        trim:true,
+        lowercase:true,
     },
     productIds:{
         type:[mongoose.Schema.Types.ObjectId],
