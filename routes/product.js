@@ -2,6 +2,7 @@ const { adminAuth, userAuth } = require("../middleware/auth");
 const Category = require("../models/category");
 const Product = require("../models/product");
 const express = require("express");
+  const {formattedValue}=require("../utils/formattedVal")
 
 const productRouter = express.Router();
 
@@ -9,7 +10,7 @@ productRouter.post("/product/create/:categoryName", adminAuth, async (req, res) 
   try {
     const items = req.body;
     const {categoryName}=req.params;
-    const { name, tags, price, description, actualPrice, ...rest } =items;
+    const { name, tags, price, description, actualPrice,healthBenefits,cuts, ...rest } =items;
     if (!name) {
       return res
         .status(400)
@@ -37,7 +38,7 @@ productRouter.post("/product/create/:categoryName", adminAuth, async (req, res) 
         .json({ success: false, message: "Category Name is required." });
     }
   
-   const catergorySlug = categoryName.trim().replace(/&/g, 'and').replace(/'/g, '').replace(/\s+/g, "-").toLowerCase();
+   const catergorySlug = formattedValue(categoryName);
     
     const category = await Category.findOne({slug: catergorySlug });
   
@@ -46,9 +47,11 @@ productRouter.post("/product/create/:categoryName", adminAuth, async (req, res) 
         .status(404)
         .json({ success: false, message: "Category not found." });
     }
-    const processedTags = tags?.map((tag) => tag.trim());
-     const formattedNameSlug = name.trim().replace(/&/g, 'and').replace(/'/g, '').replace(/\s+/g, "-").toLowerCase();
-
+    const processedTags = formattedValue(tags);
+    const formattedNameSlug = formattedValue(name);
+    const healthBenefitsFormattedValue=formattedValue(healthBenefits);
+    const cutsFormattedValue=formattedValue(cuts);
+     
     const product = new Product({
       tags: processedTags,
       categoryId:category._id,
@@ -57,6 +60,8 @@ productRouter.post("/product/create/:categoryName", adminAuth, async (req, res) 
       price,
       actualPrice,
       description,
+      healthBenefits:healthBenefitsFormattedValue,
+      cuts:cutsFormattedValue,
       ...rest,
     });
     await product.save();
@@ -77,7 +82,7 @@ productRouter.post("/product/create/:categoryName", adminAuth, async (req, res) 
   }
 });
 
-productRouter.get("/product/view/:productName", userAuth, async (req, res) => {
+productRouter.get("/product/view/:productName", async (req, res) => {
   try {
     const { productName} = req.params;
     if (!productName) {
@@ -86,17 +91,17 @@ productRouter.get("/product/view/:productName", userAuth, async (req, res) => {
         .json({ success: false, message: "Product Name is required" });
     }
 
-    const productSlug = productName.trim().replace(/&/g, 'and').replace(/'/g, '').replace(/\s+/g, "-").toLowerCase();
+    const productSlug = formattedValue(productName);
 
-    const products = await Product.findOne({slug:productSlug}).populate('categoryId');
-    if (!products) {
+    const product = await Product.findOne({slug:productSlug}).populate('categoryId');
+    if (!product) {
       return res
         .status(404)
         .json({ success: false, message: "Product not found." });
     }
     return res
       .status(200)
-      .json({ success: true, message: "Product is found .", products: products ,counts:products.length});
+      .json({ success: true, message: "Product is found .",product: product });
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -106,31 +111,37 @@ productRouter.get("/product/view/:productName", userAuth, async (req, res) => {
 });
 
 productRouter.patch(
-  "/product/update/:productSlug",
+  "/product/update/:productName",
   adminAuth,
   async (req, res) => {
     try {
-      const { categoryId,slug } = req.body;
-      if (categoryId || slug) {
+      const { categoryId,slug ,name,healthBenefits,cuts,tags,...rest} = req.body;
+      if (categoryId || slug || name) {
         return res
           .status(400)
           .json({
             success: false,
-            message: "CategoryId ID or slug cannot be updated ",
+            message: "CategoryId ID or slug  or name cannot be updated ",
           });
       }
 
-      const { productSlug } = req.params;
-      if (!productSlug) {
+      const { productName } = req.params;
+      if (!productName) {
         return res
           .status(400)
           .json({ success: false, message: "Product ID is required" });
       }
-      const formattedSlug = productSlug.trim().replace(/&/g, 'and').replace(/'/g, '').replace(/\s+/g, "-").toLowerCase();
-       console.log(formattedSlug)
+     const processedTags =formattedValue(tags); 
+    const healthBenefitsFormattedValue=formattedValue(healthBenefits);
+    const cutsFormattedValue=formattedValue(cuts);
+      const formattedSlug = formattedValue(productName);
       const updatedProduct = await Product.findOneAndUpdate(
-        {slug:formattedSlug},
-        req.body,
+        {slug:formattedSlug,
+         },
+          {tags:processedTags,
+          healthBenefits:healthBenefitsFormattedValue
+          ,cuts:cutsFormattedValue,
+        ...rest},
         { new: true }
       ).populate('categoryId');
       if (!updatedProduct) {
@@ -259,7 +270,7 @@ productRouter.get(
 
       if (req.params.categoryName) {
 
-        const formattedCategorySlug = req.params.categoryName.trim().replace(/&/g, 'and').replace(/'/g, '').replace(/\s+/g, "-").toLowerCase();
+        const formattedCategorySlug = formattedValue(req.params.categoryName);
         
         const catergory = await Category.findOne({
           slug: formattedCategorySlug 
@@ -280,7 +291,7 @@ productRouter.get(
       function addFilterArray(fieldName) {
         if (req.query[fieldName]) {
           let values = req.query[fieldName];
-          console.log("value", req.query[fieldName]);
+        
           if (typeof values === "string") {
             values = values.split(",").map((t) => t.trim());
           } else {
@@ -288,7 +299,7 @@ productRouter.get(
           }
 
           filter[fieldName] = { $in: values };
-          console.log("filter", filter);
+    
         }
       }
 
@@ -297,7 +308,6 @@ productRouter.get(
       addFilterArray("bestSuitedFor");
       addFilterArray("cuts");
 
-     console.log("filter",filter);
       const products = await Product.find(filter).populate({path:'categoryId',populate:{
                                                             path:'productIds',
                                                             model:'Product'
@@ -313,8 +323,9 @@ productRouter.get(
       res.status(200).json({
         success: true,
         message: "ALL Product got successfully.",
-        products: products,
-        counts:products.length
+        count:products.length,
+        products: products
+       
       });
     } catch (error) {
       res.status(500).json({

@@ -17,6 +17,7 @@ const productSchema = mongoose.Schema({
   description: {
     type: String,
     required: true,
+    trim:true,
   },
   price: {
     type: Number,
@@ -28,38 +29,76 @@ const productSchema = mongoose.Schema({
     required: true,
   },
   actualPrice: {
-    type: String,
+    type: Number,
     required: true,
   },
   image: {
     type: [String],
-    //  required:true,
+     required:true,
   },
   weight: {
     type: String,
   },
   numberOfPieces: {
     type: String,
+     trim: true,
   },
-  servers: {
+  serves: {
     type: String,
+     trim: true,
   },
-
+  combo:{
+    type:Number,
+     trim: true,
+  },
   howToCook: {
     type: String,
     trim: true,
   },
-  nutrition: {
-    type: String,
-    trim: true,
+  nutritionInfo: {
+    
+      image:{
+        type:String,
+        trim:true,
+      },
+      heading:{
+        type:String,
+        trim:true,
+      },
+      content:{
+        type:[String],
+        trim:true,
+      }
+    
   },
-  info: {
-    type: String,
-    trim: true,
+  moreInfo: {
+  image:{
+        type:String,
+        trim:true,
+      },
+      heading:{
+        type:String,
+        trim:true,
+      },
+      content:{
+        type:[String],
+        trim:true,
+      }
   },
-  recipes: {
-    image: { type: String, trim: true },
-    recipesInfo: { type: String, trim: true },
+
+  recipesInfo: {
+ image:{
+        type:String,
+        trim:true,
+      },
+      heading:{
+        type:String,
+        trim:true,
+      },
+      content:{
+        type:[String],
+        trim:true,
+      }
   },
   
   tags:[ {

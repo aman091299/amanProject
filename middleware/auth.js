@@ -4,9 +4,7 @@ const User = require("../models/user");
 const verifyToken = async (req, res) => {
   const { token } = req.cookies;
   if (!token) {
-    return res
-      .status(401)
-      .json({ sucess: false, message: "Token is not there" });
+    return res.status(401).json({ success: false, message: "Token is not there" });
   }
 
   var decode = await jwt.verify(token, process.env.JWT_SECRET_KEY);
@@ -15,18 +13,22 @@ const verifyToken = async (req, res) => {
 const userAuth = async (req, res, next) => {
   try {
     var decode = await verifyToken(req, res);
+    
+    if(!decode._id){
+      return ;
+    }
 
     const user = await User.findById(decode._id);
 
     if (!user) {
       return res
         .status(401)
-        .json({ sucess: false, message: "No user founded" });
+        .json({ success: false, message: "No user founded" });
     }
     req.user = user;
     next();
   } catch (error) {
-    res.status(400).json({
+   return res.status(500).json({
       success: false,
       message: "auth fail" + error,
     });
