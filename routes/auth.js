@@ -6,7 +6,7 @@ const bcrypt=require('bcrypt');
 authRouter.post('/signup',async(req,res)=>{
    try{
      
- const {emailId,name,password,role}=req.body;
+ const {emailId,password,firstName,lastName,role}=req.body;
 
         if (!emailId) {
      return  res.status(400).json({success: false,message:"Emailid is required"})
@@ -14,7 +14,12 @@ authRouter.post('/signup',async(req,res)=>{
     if (!password) {
      return res.status(400).json({success: false,message:"Password is required"});
     }
-    
+      if (!firstName) {
+     return  res.status(400).json({success: false,message:"firstName is required"})
+    }
+    if (!lastName) {
+     return res.status(400).json({success: false,message:"lastName is required"});
+    }
    const userExist=await User.findOne({emailId});
    if(userExist){
     return  res.status(404).json({
@@ -24,7 +29,7 @@ authRouter.post('/signup',async(req,res)=>{
    }
    const hashPassword=await bcrypt.hash(password,10)
    const user=new User({
-         emailId,name,password:hashPassword,role
+         emailId,firstName,password:hashPassword,role,lastName
    })
 
    //generate token
@@ -41,14 +46,17 @@ authRouter.post('/signup',async(req,res)=>{
     httpOnly: true
    })
       await user.save();
+      user.password=undefined;
    res.status(200).json({
       success:true,
-      message:'user is successfull register'
+       data:user,
+      message:'user is successfully register'
    })
    }
    catch(err){
    res.status(500).json({
       success:false,
+     
       message:'user registeration fail' + err,
    })
    }
@@ -101,7 +109,7 @@ authRouter.post('/login',async(req,res)=>{
     res.status(200).json({
       success:true,
       message:"successfully login",
-         userExist
+         data:userExist
     })
   } catch (error) {
       res.status(500).json({

@@ -336,7 +336,7 @@ productRouter.get(
   }
 );
 
-productRouter.get("/product/allProductDetails",userAuth,async(req,res)=>{
+productRouter.get("/product/allProductDetails",async(req,res)=>{
 
     try {
       const products = await Product.find({}).populate({path:'categoryId',
