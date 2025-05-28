@@ -110,10 +110,117 @@ productRouter.get("/product/view/:productName", async (req, res) => {
   }
 });
 
-productRouter.patch(
-  "/product/update/:productName",
-  adminAuth,
-  async (req, res) => {
+productRouter.get("/product/viewAllProducts/:categoryName",async (req, res) => {
+    try {
+      const filter = {};
+
+      //  if(req.query.minTime || req.query.maxTime){
+      //     minTime=req.query.minTime||0;
+      //       maxTime=req.query.maxTime||Infinity;
+      //       filter['cookingTime.minTime']={$gte:minTime};
+      //       filter['cookingTime.maxTime']={$lte:maxTime}
+      //  }
+
+      if (req.params.categoryName) {
+
+        const formattedCategorySlug = formattedValue(req.params.categoryName);
+        
+        const catergory = await Category.findOne({
+          slug: formattedCategorySlug 
+        });
+        if(!catergory){
+         return res.status(404).json({
+        success:false,
+        message: "Category not found ",
+               });
+        }
+        filter.categoryId = catergory._id;
+      }
+
+      if (req.query.boneType) {
+        filter.boneType = req.query.boneType;
+      }
+
+      function addFilterArray(fieldName) {
+        if (req.query[fieldName]) {
+          let values = req.query[fieldName];
+        
+          if (typeof values === "string") {
+            values = values.split(",").map((t) => t.trim());
+          } else {
+            values = values.map((t) => t.trim());
+          }
+
+          filter[fieldName] = { $in: values };
+    
+        }
+      }
+
+      addFilterArray("tags");
+      addFilterArray("healthBenefits");
+      addFilterArray("bestSuitedFor");
+      addFilterArray("cuts");
+
+      const products = await Product.find(filter).populate({path:'categoryId',populate:{
+                                                            path:'productIds',
+                                                            model:'Product'
+      }});
+      if(!products){
+          return  res.status(404).json({
+        success: true,
+        message: "Product not found.",
+        products: products,
+      });
+      }
+       
+      res.status(200).json({
+        success: true,
+        message: "ALL Product got successfully.",
+        count:products.length,
+        products: products
+       
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: "Fail to get all product: " + error,
+      });
+    }
+  }
+);
+
+productRouter.get("/product/allProductDetails",async(req,res)=>{
+
+    try {
+      const products = await Product.find({}).populate({path:'categoryId',
+                                                        populate:{
+                                                          path:'productIds',
+                                                           model: 'Product',
+                                                        }});
+        if(!products){
+          return  res.status(404).json({
+        success: true,
+        message: "Product not found.",
+        products: products,
+      });
+      }
+        res.status(200).json({
+        success: true,
+        message: "ALL Product got successfully.",
+         count:products.length,
+        products: products
+       
+      });
+    } catch (error) {
+       return res.status(500).json({
+        success: false,
+        message: "Fail to get all product: " + error,
+      });
+      
+    }
+})
+
+productRouter.patch("/product/update/:productName", adminAuth, async (req, res) => {
     try {
       const { categoryId,slug ,name,healthBenefits,cuts,tags,...rest} = req.body;
       if (categoryId || slug || name) {
@@ -255,115 +362,5 @@ productRouter.delete("/product/deleteAllProducts",adminAuth,async(req,res)=>{
 
 })
 
-productRouter.get(
-  "/product/viewAllProducts/:categoryName",
-  async (req, res) => {
-    try {
-      const filter = {};
 
-      //  if(req.query.minTime || req.query.maxTime){
-      //     minTime=req.query.minTime||0;
-      //       maxTime=req.query.maxTime||Infinity;
-      //       filter['cookingTime.minTime']={$gte:minTime};
-      //       filter['cookingTime.maxTime']={$lte:maxTime}
-      //  }
-
-      if (req.params.categoryName) {
-
-        const formattedCategorySlug = formattedValue(req.params.categoryName);
-        
-        const catergory = await Category.findOne({
-          slug: formattedCategorySlug 
-        });
-        if(!catergory){
-         return res.status(404).json({
-        success:false,
-        message: "Category not found ",
-               });
-        }
-        filter.categoryId = catergory._id;
-      }
-
-      if (req.query.boneType) {
-        filter.boneType = req.query.boneType;
-      }
-
-      function addFilterArray(fieldName) {
-        if (req.query[fieldName]) {
-          let values = req.query[fieldName];
-        
-          if (typeof values === "string") {
-            values = values.split(",").map((t) => t.trim());
-          } else {
-            values = values.map((t) => t.trim());
-          }
-
-          filter[fieldName] = { $in: values };
-    
-        }
-      }
-
-      addFilterArray("tags");
-      addFilterArray("healthBenefits");
-      addFilterArray("bestSuitedFor");
-      addFilterArray("cuts");
-
-      const products = await Product.find(filter).populate({path:'categoryId',populate:{
-                                                            path:'productIds',
-                                                            model:'Product'
-      }});
-      if(!products){
-          return  res.status(404).json({
-        success: true,
-        message: "Product not found.",
-        products: products,
-      });
-      }
-       
-      res.status(200).json({
-        success: true,
-        message: "ALL Product got successfully.",
-        count:products.length,
-        products: products
-       
-      });
-    } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: "Fail to get all product: " + error,
-      });
-    }
-  }
-);
-
-productRouter.get("/product/allProductDetails",async(req,res)=>{
-
-    try {
-      const products = await Product.find({}).populate({path:'categoryId',
-                                                        populate:{
-                                                          path:'productIds',
-                                                           model: 'Product',
-                                                        }});
-        if(!products){
-          return  res.status(404).json({
-        success: true,
-        message: "Product not found.",
-        products: products,
-      });
-      }
-        res.status(200).json({
-        success: true,
-        message: "ALL Product got successfully.",
-         count:products.length,
-        products: products
-       
-      });
-    } catch (error) {
-       return res.status(500).json({
-        success: false,
-        message: "Fail to get all product: " + error,
-      });
-      
-    }
-})
 module.exports = productRouter;

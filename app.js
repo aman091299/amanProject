@@ -10,7 +10,10 @@ const cookieParser=require('cookie-parser');
 const express=require('express');
 const app=express();
 
-app.use(cors())
+app.use(cors({
+     origin: ['http://localhost:3000','http://localhost:3001'], 
+    credentials:true,
+}))
 app.use(express.json())
 app.use(cookieParser())
 
@@ -18,6 +21,7 @@ app.use('/',authRouter);
 app.use('/',profileRouter);
 app.use('/',productRouter);
 app.use('/',categoryRouter);
+app.use('/',cartRouter)
 
 const port=process.env.PORT || 3000;
 

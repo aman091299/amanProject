@@ -3,22 +3,23 @@ const User = require("../models/user");
 const profileRouter = express.Router();
 const {userAuth}=require('../middleware/auth')
 
-profileRouter.get("/profile/view", userAuth,async (req, res) => {
+profileRouter.get("/profile/view",userAuth,async (req, res) => {
   try {
-
+  
     const {emailId}=req.user;
     const userExist = await User.findOne({ emailId });
 
     if (!userExist) {
       res.status(404).json({
         success: false,
+        data:userExist,
         message: "user does not exist ",
       });
     }
 
     res.status(200).json({
       success: true,
-      userExist,
+      data:userExist,
       message: "Profile view successfully",
     });
   } catch (error) {

@@ -31,19 +31,13 @@ authRouter.post('/signup',async(req,res)=>{
    const user=new User({
          emailId,firstName,password:hashPassword,role,lastName
    })
-
    //generate token
-   const token =user.generateAuthToken();
+   const token =await user.generateAuthToken();
    res.cookie('token',token,{
    expires: new Date(Date.now() + 86400000), 
-    // "path" - The cookie is accessible for APIs under the '/api' route
-   //  path: '/api', 
-    // "domain" - The cookie belongs to the 'example.com' domain
-   //  domain: 'example.com', 
-    // "secure" - The cookie will be sent over HTTPS only
-    secure: true, 
-    // "HttpOnly" - The cookie cannot be accessed by client-side scripts
-    httpOnly: true
+    secure: false,
+      sameSite: "lax",
+      httpOnly: true, 
    })
       await user.save();
       user.password=undefined;
@@ -67,6 +61,7 @@ authRouter.post('/signup',async(req,res)=>{
 authRouter.post('/login',async(req,res)=>{
   try {
      const {emailId,password}=req.body;
+    
         if (!emailId) {
      return  res.status(400).json({success: false,message:"Emailid is required"})
     }
@@ -76,7 +71,7 @@ authRouter.post('/login',async(req,res)=>{
     
     const userExist=await User.findOne({emailId});
     if(!userExist){
-      res.status(404).json({
+     return res.status(404).json({
          success:false,
          message:" Please signup "
       })
@@ -100,10 +95,14 @@ authRouter.post('/login',async(req,res)=>{
    //  path: '/api', 
     // "domain" - The cookie belongs to the 'example.com' domain
    //  domain: 'example.com', 
-    // "secure" - The cookie will be sent over HTTPS only
-    secure: true, 
-    // "HttpOnly" - The cookie cannot be accessed by client-side scripts
-    httpOnly: true
+    // "secure" - The cookie will be sent over HTTPS 
+//   sameSite: 'lax', // Use 'lax' or 'strict' for local, 'none' only if using HTTPS + cross-origin
+    secure: false,
+      sameSite: "lax",
+      httpOnly: true,     
+           
+  // "HttpOnly" - The cookie cannot be accessed by client-side scripts
+  
     })
     userExist.password=undefined;
     res.status(200).json({
@@ -123,6 +122,7 @@ authRouter.post('/login',async(req,res)=>{
 })
 
 authRouter.post('/logout',async(req,res)=>{
+
    res.clearCookie("token");
    return  res.status(200).json({
   success: true,
