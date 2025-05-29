@@ -6,7 +6,6 @@ const cartRouter = express.Router();
 
 cartRouter.post("/cart/addItem", identifyGuestAuth, async (req, res) => {
   try {
- 
     const { productId, quantity } = req.body;
 
     if (!productId) {
@@ -35,7 +34,7 @@ cartRouter.post("/cart/addItem", identifyGuestAuth, async (req, res) => {
 
     if (req.isGuestedUser) {
       //checking where it has cart in cookie
-     
+
       const guestedCart = req.cookies.guestedCart
         ? JSON.parse(req.cookies.guestedCart)
         : [];
@@ -46,7 +45,7 @@ cartRouter.post("/cart/addItem", identifyGuestAuth, async (req, res) => {
           (cartItem) => cartItem._id === productId
         );
         //now if we find the index
-    
+
         if (index !== -1 && quantity === 0) {
           guestedCart.splice(index, 1);
         } else if (index !== -1) {
@@ -110,7 +109,7 @@ cartRouter.post("/cart/addItem", identifyGuestAuth, async (req, res) => {
 
       if (cartExist) {
         const index = cartExist.items.findIndex(
-          (item) => item.productId.toString() === productId
+          (item) => item.productId.toString() === productId.toString()
         );
         if (index !== -1 && quantity === 0) {
           cartExist.items.splice(index, 1);
@@ -155,7 +154,6 @@ cartRouter.post("/cart/addItem", identifyGuestAuth, async (req, res) => {
       });
     }
   } catch (error) {
-
     res.status(500).json({
       success: false,
       message: "Error while creating cart item : " + error,
@@ -187,8 +185,8 @@ cartRouter.get(
             .json({ success: false, message: "userId is required" });
         }
 
-        const cart = await Cart.findOne({ userId }).populate('items.productId');
-      
+        const cart = await Cart.findOne({ userId }).populate("items.productId");
+
         if (!cart) {
           return res.status(200).json({
             data: cart,
@@ -196,19 +194,16 @@ cartRouter.get(
             message: "Cart does not exist ",
           });
         }
-        console.log("cart items product id",cart.items[0].productId);
-      
-        const newCart=cart?.items?.map((item)=>({
-           name:item.productId.name,
-          price:item.productId.price,
-          itemQuantity:item.quantity,
-          _id:item.productId._id,
-          combo:item.productId.combo,
-          actualPrice:item.productId.actualPrice
-        
-          }  ))
-      
-        
+
+        const newCart = cart?.items?.map((item) => ({
+          name: item.productId.name,
+          price: item.productId.price,
+          itemQuantity: item.quantity,
+          _id: item.productId._id,
+          combo: item.productId.combo,
+          actualPrice: item.productId.actualPrice,
+        }));
+
         return res.status(200).json({
           data: newCart,
           success: true,
@@ -223,5 +218,84 @@ cartRouter.get(
     }
   }
 );
+
+cartRouter.post("/cart/merge", identifyGuestAuth, async (req, res) => {
+  try {
+    //first check a user is loggin and having guestedCart
+
+    if (!req.isGuestedUser && req.cookies.guestedCart) {
+      const userId = req.user._id;
+
+      const guestedCart = JSON.parse(req.cookies.guestedCart);
+
+      //push the guestedCart data in db but if user having some items in cart we should update the item quantity
+
+      const cartExist = await Cart.findOne({ userId }).populate(
+        "items.productId"
+      );
+      if (cartExist) {
+        //Now we are updating the user product quantity
+        guestedCart.forEach((guestedItem) => {
+          const existingItem = cartExist.items.find(
+            (item) =>
+              item.productId._id.toString() === guestedItem._id.toString()
+          );
+          if (existingItem) {
+            existingItem.quantity += guestedItem.itemQuantity;
+          } else {
+
+            cartExist.items.push({
+              productId: guestedItem._id,
+              quantity: guestedItem.itemQuantity,
+              price: guestedItem.price,
+            });
+          }
+        });
+        await cartExist.save();
+        const newCart = cartExist?.items?.map((item) => ({
+          name: item.productId.name,
+          price: item.productId.price,
+          itemQuantity: item.quantity,
+          _id: item.productId._id,
+          combo: item.productId.combo,
+          actualPrice: item.productId.actualPrice,
+        }));
+         res.clearCookie('guestedCart');
+        return res.status(200).json({
+          success: true,
+          data: newCart,
+          message: "Cart merge successfully with guested Item",
+        });
+      } else {
+        const newCartItems = guestedCart.map((guestedItem) => ({
+          productId: guestedItem._id,
+          price: guestedItem.price,
+          quantity: guestedItem.itemQuantity,
+        }));
+
+        const cart = new Cart({
+          items: newCartItems,
+          userId,
+        });
+        await cart.save();
+
+        res.clearCookie('guestedCart');
+
+        return res.status(200).json({
+          success: true,
+          data: guestedCart,
+          message: "After data merge cart created successfully ",
+        });
+      }
+      //guestedCart is an array of object
+    }
+        res.status(200).json({ success: true, message: 'No guest cart to merge' });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: "Error while merge cart item : " + err,
+    });
+  }
+});
 
 module.exports = cartRouter;
