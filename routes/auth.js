@@ -130,4 +130,26 @@ authRouter.post('/logout',async(req,res)=>{
   });
 })
 
+authRouter.get('/user/reverseGeocode',async(req,resp)=>{
+   
+  const lng=req.query.lng;
+  const lat=req.query.lat;
+ try {
+      const res = await fetch(
+    `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&&zoom=17`
+  );
+  const data = await res.json();
+     resp.status(200).json({
+     success:true,
+     data:data,
+     message:"User address got sucessfully from reverse geocode api",
+   })
+ } catch (error) {
+   resp.status(500).json({
+     success:false,
+     message:"Error in getting user address in reverse Geocode"+error
+   })
+ }
+})
+
 module.exports=authRouter;

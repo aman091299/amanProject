@@ -161,10 +161,7 @@ cartRouter.post("/cart/addItem", identifyGuestAuth, async (req, res) => {
   }
 });
 
-cartRouter.get(
-  "/cart/viewAllCartItems",
-  identifyGuestAuth,
-  async (req, res) => {
+cartRouter.get( "/cart/viewAllCartItems",identifyGuestAuth, async (req, res) => {
     try {
       if (req.isGuestedUser) {
         const cart = req.cookies.guestedCart
@@ -189,7 +186,7 @@ cartRouter.get(
 
         if (!cart) {
           return res.status(200).json({
-            data: cart,
+            data: [],
             success: true,
             message: "Cart does not exist ",
           });
@@ -252,7 +249,8 @@ cartRouter.post("/cart/merge", identifyGuestAuth, async (req, res) => {
           }
         });
         await cartExist.save();
-        const newCart = cartExist?.items?.map((item) => ({
+        const updatedCart = await Cart.findOne({ userId }).populate("items.productId");
+        const newCart = updatedCart?.items?.map((item) => ({
           name: item.productId.name,
           price: item.productId.price,
           itemQuantity: item.quantity,
@@ -289,7 +287,7 @@ cartRouter.post("/cart/merge", identifyGuestAuth, async (req, res) => {
       }
       //guestedCart is an array of object
     }
-        res.status(200).json({ success: true, message: 'No guest cart to merge' });
+        res.status(200).json({ success: true,data:[],message: 'No guest cart to merge' });
   } catch (err) {
     res.status(500).json({
       success: false,

@@ -2,7 +2,15 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 
 const verifyToken = async (req, res) => {
-  const { token } = req.cookies;
+ let token = null;
+
+ const authHeader = req.headers.authorization;
+   token = authHeader && authHeader.split(" ")[1]; // "Bearer <token>"
+
+  // Fallback to cookies if no header token found
+  if (!token && req.cookies?.token) {
+    token = req.cookies.token;
+  }
   if (!token) {
     return res
       .status(401)

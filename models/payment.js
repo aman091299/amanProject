@@ -2,10 +2,14 @@ const mongoose=require('mongoose');
 const User=require('./user')
 
 const paymentSchema=new mongoose.Schema({
-    orderId:{
-        type:mongoose.Schema.Types.ObjectId,
+    // orderId:{
+    //     type:mongoose.Schema.Types.ObjectId,
+    //     required:true,
+    //     ref:'Order'
+    // },
+       orderId:{
+        type:String,
         required:true,
-        ref:'Order'
     },
     userId:{
        type:mongoose.Schema.Types.ObjectId,
@@ -13,19 +17,28 @@ const paymentSchema=new mongoose.Schema({
        required:true,
 
     },
+    cartId:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'Cart',
+        required:true,
+    },
     dateOfPayment:{
         type:Date,
-        required:true,
+       
+    },
+    address:{
+        type:Object,
+        require:true,
     },
     status:{
         type:String,
         required:true,
     },
     amount:{
-        type:String,
+        type:Number,
         required:true,
     },
-    membershipType:{
+    paymentMethod:{
         type:String,
     },
     currency:{
@@ -38,7 +51,7 @@ const paymentSchema=new mongoose.Schema({
         lastName:{
             type:String,
         },
-        membershipType:{
+        paymentMethod:{
             type:String,
         }
     }
