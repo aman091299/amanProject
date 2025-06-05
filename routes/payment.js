@@ -129,6 +129,8 @@ paymentRouter.post("/payment/webhook",async(req,res)=>{
       if (!payment) {
       return res.status(404).json({ message: "Payment record not found" });
     }
+      return res.status(200).json({ message: "Payment Verify Successfully" });
+
     }
      if (webhookBody.event === "payment.failed") {
       console.log("WEBHOOK payment fail");
