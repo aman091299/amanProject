@@ -66,10 +66,10 @@ paymentRouter.post("/payment/create/order",userAuth,async(req,res)=>{
         });
     }
 
-   const { id, amount, currency, notes, status } = order;
+   const { id, currency, notes, status } = order;
     const createPayment = new Payment({
         orderId: id,
-        amount: amount,
+        amount: cart.totalPrice,
         currency: currency,
         status: status,
         userId: user._id,
