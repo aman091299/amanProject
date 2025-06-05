@@ -116,7 +116,7 @@ cartRouter.post("/cart/addItem", identifyGuestAuth, async (req, res) => {
       if (cartExist) {
         console.log("find")
         const index = cartExist.items.findIndex(
-          (item) =>console.log("item productID",item.productId.toString(),typeof item.productId.toString() ) 
+          (item) =>console.log("item productID",item.productId._id.toString(),typeof item.productId._id ) 
         );
         console.log("cartExist inside add item index...",index,"productid",productId,typeof productId,"quantity",quantity);
 
