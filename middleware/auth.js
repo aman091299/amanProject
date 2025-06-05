@@ -6,6 +6,7 @@ const verifyToken = async (req, res) => {
 
  const authHeader = req.headers.authorization;
    token = authHeader && authHeader.split(" ")[1]; // "Bearer <token>"
+       console.log("token...2",token)
 
   // Fallback to cookies if no header token found
   if (!token && req.cookies?.token) {
@@ -69,7 +70,7 @@ const identifyGuestAuth = async (req, res, next) => {
       req.isGuestedUser = true;
       return next();
     }
-
+     console.log("token...1",token)
     let decode = false;
 
     try {
