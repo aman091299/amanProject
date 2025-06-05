@@ -255,6 +255,8 @@ cartRouter.post("/cart/merge", identifyGuestAuth, async (req, res) => {
             });
           }
         });
+        const totalPrice = cartExist.calculateTotalPrice();
+        cartExist.totalPrice = totalPrice;
         await cartExist.save();
         const updatedCart = await Cart.findOne({ userId }).populate("items.productId").sort({ createdAt: -1 });
         const newCart = updatedCart?.items?.map((item) => ({
@@ -282,6 +284,8 @@ cartRouter.post("/cart/merge", identifyGuestAuth, async (req, res) => {
           items: newCartItems,
           userId,
         });
+          const totalPrice = cart.calculateTotalPrice();
+        cart.totalPrice = totalPrice;
         await cart.save();
 
         res.clearCookie('guestedCart');
