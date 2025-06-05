@@ -47,7 +47,6 @@ paymentRouter.post("/payment/create/order",userAuth,async(req,res)=>{
             amount:cart.totalPrice*100,  // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
             currency: "INR",
             receipt: "order_rcptid_11",
-            email: user?.emailId,
             notes: {
                     firstName: user?.firstName,
                     lastName: user?.lastName,
