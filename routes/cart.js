@@ -112,7 +112,7 @@ cartRouter.post("/cart/addItem", identifyGuestAuth, async (req, res) => {
       }
 
         const cartExist = await Cart.findOne({ userId }).populate("items.productId").sort({ createdAt: -1 });
-
+       console.log("cartExist inside add item",cartExist)
       if (cartExist) {
         const index = cartExist.items.findIndex(
           (item) => item.productId.toString() === productId.toString()
@@ -139,6 +139,7 @@ cartRouter.post("/cart/addItem", identifyGuestAuth, async (req, res) => {
           message: " cart updated Successfully ",
         });
       }
+    console.log("cart do not exist Exist inside add item",cartExist)
 
       const newCart = new Cart({
         items: [
