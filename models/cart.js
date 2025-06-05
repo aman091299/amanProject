@@ -27,7 +27,12 @@ const cartSchema = new mongoose.Schema(
     totalPrice:{
       type:Number,
       default:0,
-    }
+    },
+  status: {
+  type: String,
+  enum: ['active', 'ordered'],
+  default: 'active'
+},
   },
   { timestamps: true }
 );

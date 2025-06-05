@@ -189,7 +189,7 @@ cartRouter.get( "/cart/viewAllCartItems",identifyGuestAuth, async (req, res) => 
             .json({ success: false, message: "userId is required" });
         }
 
-        const cart = await Cart.findOne({ userId }).populate("items.productId");
+        const cart = await Cart.findOne({ userId }).populate("items.productId").sort({ createdAt: -1 });
 
         if (!cart) {
           return res.status(200).json({

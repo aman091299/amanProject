@@ -106,7 +106,6 @@ paymentRouter.post("/payment/webhook",async(req,res)=>{
   try {
     console.log("inside webhook");
     const webhookBody = req.body;
-    console.log("webhookBody",webhookBody ,process.env.WEBHOOK_SECREAT_KEY)
     const webhookSignature = req.headers["x-razorpay-signature"];
     
      const isWebhookValid = validateWebhookSignature(
@@ -118,9 +117,7 @@ paymentRouter.post("/payment/webhook",async(req,res)=>{
       console.log("WEBHOOK Invalid");
       return res.status(400).json({ message: "Invalid webhook Signature" });
     }
-    console.log("webhookBody",webhookBody.payload.payment.entity);
     const { order_id, notes, status } = webhookBody.payload.payment.entity;
-    console.log("notes",notes)
    
     if (webhookBody.event === "payment.captured") {
 
@@ -132,6 +129,23 @@ paymentRouter.post("/payment/webhook",async(req,res)=>{
       if (!payment) {
       return res.status(404).json({ message: "Payment record not found" });
     }
+      // creat an empty cart of this user and do the thing in here in cart and donot delete the previous cart this may lost the history of payment model cartId
+        const cart = await Cart.findOneAndUpdate({ userId: notes.user_id },{ status: 'ordered' });
+     
+        if (!cart) {
+          return res.status(200).json({
+            data: [],
+            success: true,
+            message: "Cart does not exist ",
+          });
+        }
+          const newEmptyCart = new Cart({
+          userId: notes.user_id,
+          items: [],
+          totalPrice: 0,
+        });
+
+        await newEmptyCart.save();
       return res.status(200).json({ message: "Payment Verify Successfully" });
 
     }
