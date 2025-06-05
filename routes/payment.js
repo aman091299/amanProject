@@ -120,6 +120,7 @@ paymentRouter.post("/payment/webhook",async(req,res)=>{
     }
     console.log("webhookBody",webhookBody.payload.payment.entity);
     const { order_id, notes, status } = webhookBody.payload.payment.entity;
+    console.log("notes",notes)
    
     if (webhookBody.event === "payment.captured") {
 
