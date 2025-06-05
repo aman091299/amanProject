@@ -26,7 +26,7 @@ cartRouter.post("/cart/addItem", identifyGuestAuth, async (req, res) => {
 
     const product = await Product.findById(productId);
     if (!product) {
-      res.status(404).json({
+    return  res.status(404).json({
         success: false,
         message: "Product do not exist",
       });
