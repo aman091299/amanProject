@@ -33,7 +33,7 @@ paymentRouter.post("/payment/create/order",userAuth,async(req,res)=>{
       })
     }
 
-      const cart = await Cart.findOne({ userId:user._id }).populate("items.productId");
+      const cart = await Cart.findOne({ userId:user._id }).populate("items.productId").sort({ createdAt: -1 });
      
         if (!cart) {
           return res.status(200).json({
