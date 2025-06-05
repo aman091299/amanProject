@@ -111,7 +111,7 @@ cartRouter.post("/cart/addItem", identifyGuestAuth, async (req, res) => {
           .json({ success: false, message: "userId is required" });
       }
 
-      const cartExist = await Cart.findOne({ userId });
+        const cartExist = await Cart.findOne({ userId }).populate("items.productId").sort({ createdAt: -1 });
 
       if (cartExist) {
         const index = cartExist.items.findIndex(
@@ -235,9 +235,8 @@ cartRouter.post("/cart/merge", identifyGuestAuth, async (req, res) => {
 
       //push the guestedCart data in db but if user having some items in cart we should update the item quantity
 
-      const cartExist = await Cart.findOne({ userId }).populate(
-        "items.productId"
-      );
+             const cartExist = await Cart.findOne({ userId }).populate("items.productId").sort({ createdAt: -1 });
+
       if (cartExist) {
         //Now we are updating the user product quantity
         guestedCart.forEach((guestedItem) => {
@@ -257,7 +256,7 @@ cartRouter.post("/cart/merge", identifyGuestAuth, async (req, res) => {
           }
         });
         await cartExist.save();
-        const updatedCart = await Cart.findOne({ userId }).populate("items.productId");
+        const updatedCart = await Cart.findOne({ userId }).populate("items.productId").sort({ createdAt: -1 });
         const newCart = updatedCart?.items?.map((item) => ({
           name: item.productId.name,
           price: item.productId.price,
