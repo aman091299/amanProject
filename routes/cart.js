@@ -38,7 +38,7 @@ cartRouter.post("/cart/addItem", identifyGuestAuth, async (req, res) => {
       const guestedCart = req.cookies.guestedCart
         ? JSON.parse(req.cookies.guestedCart)
         : [];
-
+        console.log("guested cart",guestedCart)
       if (guestedCart.length !== 0) {
         //it has cart so update the cart
         const index = guestedCart.findIndex(
@@ -65,6 +65,9 @@ cartRouter.post("/cart/addItem", identifyGuestAuth, async (req, res) => {
         }
         res.cookie("guestedCart", JSON.stringify(guestedCart), {
           expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+              secure: true,
+          sameSite: "none",
+          httpOnly: true,  
         });
 
         res.status(200).json({
@@ -88,6 +91,9 @@ cartRouter.post("/cart/addItem", identifyGuestAuth, async (req, res) => {
 
         res.cookie("guestedCart", JSON.stringify(cart), {
           expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+            secure: true,
+          sameSite: "none",
+          httpOnly: true,  
         });
         res.status(200).json({
           success: true,
@@ -167,6 +173,7 @@ cartRouter.get( "/cart/viewAllCartItems",identifyGuestAuth, async (req, res) => 
         const cart = req.cookies.guestedCart
           ? JSON.parse(req.cookies.guestedCart)
           : [];
+          console.log("guestedCarrt",cart);
         return res.status(200).json({
           data: cart,
           success: true,
@@ -224,6 +231,7 @@ cartRouter.post("/cart/merge", identifyGuestAuth, async (req, res) => {
       const userId = req.user._id;
 
       const guestedCart = JSON.parse(req.cookies.guestedCart);
+      console.log("gusetedCart",guestedCart);
 
       //push the guestedCart data in db but if user having some items in cart we should update the item quantity
 

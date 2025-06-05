@@ -97,8 +97,8 @@ authRouter.post('/login',async(req,res)=>{
    //  domain: 'example.com', 
     // "secure" - The cookie will be sent over HTTPS 
 //   sameSite: 'lax', // Use 'lax' or 'strict' for local, 'none' only if using HTTPS + cross-origin
-    secure: false,
-      sameSite: "lax",
+    secure: true,
+      sameSite: "none",
       httpOnly: true,     
            
   // "HttpOnly" - The cookie cannot be accessed by client-side scripts
