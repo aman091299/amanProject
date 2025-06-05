@@ -123,7 +123,11 @@ authRouter.post('/login',async(req,res)=>{
 
 authRouter.post('/logout',async(req,res)=>{
 
-   res.clearCookie("token");
+   res.clearCookie("token",{
+     secure: true,
+      sameSite: "none",
+      httpOnly: true,     
+   });
    return  res.status(200).json({
   success: true,
     message: "User logout sucessfully",
