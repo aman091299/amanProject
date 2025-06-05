@@ -12,7 +12,7 @@ const express=require('express');
 const app=express();
 
 app.use(cors({
-     origin: ['http://localhost:3000','http://localhost:3001', 'https://ecommerce-frontend-eight-pearl.vercel.app' ], 
+     origin: ['http://localhost:3000','http://localhost:3001', 'https://ecommerce-frontend-one-fawn.vercel.app/',], 
     credentials:true,
 }))
 app.use(express.json())
