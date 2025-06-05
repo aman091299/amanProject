@@ -146,7 +146,7 @@ paymentRouter.post("/payment/webhook",async(req,res)=>{
         });
 
         await newEmptyCart.save();
-      return res.status(200).json({ message: "Payment Verify Successfully" });
+      return res.status(200).json({ message: "Payment Verify Successfully and new Cart is created Successfully" });
 
     }
      if (webhookBody.event === "payment.failed") {
