@@ -130,7 +130,7 @@ paymentRouter.post("/payment/webhook",async(req,res)=>{
       return res.status(404).json({ message: "Payment record not found" });
     }
       // creat an empty cart of this user and do the thing in here in cart and donot delete the previous cart this may lost the history of payment model cartId
-        const cart = await Cart.findOneAndUpdate({ userId: notes.user_id },{ status: 'ordered' });
+        const cart = await Cart.findOneAndUpdate({ userId: notes.user_id },{ status: 'ordered' }).sort({ createdAt: -1 });
      
         if (!cart) {
           return res.status(200).json({
