@@ -53,6 +53,9 @@ const paymentSchema=new mongoose.Schema({
         },
         paymentMethod:{
             type:String,
+        },
+        emailId:{
+            type:String,
         }
     }
 

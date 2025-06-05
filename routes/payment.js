@@ -13,6 +13,7 @@ paymentRouter.post("/payment/create/order",userAuth,async(req,res)=>{
          const {type}=req.body;
 
       const user=req.user;
+      console.log("user emaild id",user,user?.emailId)
         const userExist = await User.findById( req.user._id);
       
           if (!userExist) {
@@ -81,6 +82,7 @@ paymentRouter.post("/payment/create/order",userAuth,async(req,res)=>{
           paymentMethod: notes.paymentMethod,
           address:address,
           cart:cart._id,
+          emailId:user?.emailId
         },
       });
       await createPayment.save();
