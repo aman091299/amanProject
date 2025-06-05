@@ -70,7 +70,7 @@ cartRouter.post("/cart/addItem", identifyGuestAuth, async (req, res) => {
           httpOnly: true,  
         });
 
-        res.status(200).json({
+       return res.status(200).json({
           success: true,
           data: guestedCart,
           message: "Successfully guested cart add in cookies",
