@@ -47,11 +47,12 @@ paymentRouter.post("/payment/create/order",userAuth,async(req,res)=>{
             amount:cart.totalPrice*100,  // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
             currency: "INR",
             receipt: "order_rcptid_11",
+            email: user?.emailId,
             notes: {
                     firstName: user?.firstName,
                     lastName: user?.lastName,
                     user_id: user._id,
-                    emailId:user?.emailID,
+                    emailId:user?.emailId,
                     paymentMethod: type,
 
                 },
@@ -104,7 +105,7 @@ paymentRouter.post("/payment/webhook",async(req,res)=>{
   try {
     console.log("inside webhook");
     const webhookBody = req.body;
-    console.log("webhookBody",webhookBody )
+    console.log("webhookBody",webhookBody ,process.env.WEBHOOK_SECREAT_KEY)
     const webhookSignature = req.headers["x-razorpay-signature"];
     
      const isWebhookValid = validateWebhookSignature(
