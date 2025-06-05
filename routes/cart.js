@@ -111,7 +111,7 @@ cartRouter.post("/cart/addItem", identifyGuestAuth, async (req, res) => {
           .json({ success: false, message: "userId is required" });
       }
 
-        const cartExist = await Cart.findOne({ userId }).populate("items.productId").sort({ createdAt: -1 });
+        const cartExist = await Cart.findOne({ userId }).sort({ createdAt: -1 }).populate("items.productId");
        console.log("cartExist inside add item",cartExist)
       if (cartExist) {
         const index = cartExist.items.findIndex(
