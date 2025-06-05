@@ -114,8 +114,9 @@ cartRouter.post("/cart/addItem", identifyGuestAuth, async (req, res) => {
         const cartExist = await Cart.findOne({ userId }).sort({ createdAt: -1 }).populate("items.productId");
        console.log("cartExist inside add item",cartExist)
       if (cartExist) {
+        console.log("findindex.........")
         const index = cartExist.items.findIndex(
-          (item) =>console.log("item productID",item.productId.toString(),typeof item.productId.toString() ) 
+          (item) =>console.log("item productID..",item.productId,typeof item.productId ) 
         );
         console.log("cartExist inside add item index...",index,"productid",productId,typeof productId,"quantity",quantity);
 
