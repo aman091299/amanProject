@@ -192,6 +192,7 @@ productRouter.get("/product/viewAllProducts/:categoryName",async (req, res) => {
 productRouter.get("/product/allProductDetails",async(req,res)=>{
 
     try {
+      console.log("inside product details")
       const products = await Product.find({}).populate({path:'categoryId',
                                                         populate:{
                                                           path:'productIds',
