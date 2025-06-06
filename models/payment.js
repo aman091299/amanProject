@@ -2,11 +2,7 @@ const mongoose=require('mongoose');
 const User=require('./user')
 
 const paymentSchema=new mongoose.Schema({
-    // orderId:{
-    //     type:mongoose.Schema.Types.ObjectId,
-    //     required:true,
-    //     ref:'Order'
-    // },
+ 
        orderId:{
         type:String,
         required:true,
@@ -38,8 +34,14 @@ const paymentSchema=new mongoose.Schema({
         type:Number,
         required:true,
     },
-    paymentMethod:{
-        type:String,
+ paymentStatus: {
+     type: String, 
+     enum: ['Pending', 'Paid'],
+      default: 'Pending'
+     },
+  paymentMode: { 
+    type: String,
+     enum: ['COD', 'Online'] 
     },
     currency:{
         type:String,

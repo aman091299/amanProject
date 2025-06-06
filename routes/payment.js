@@ -73,6 +73,8 @@ paymentRouter.post("/payment/create/order",userAuth,async(req,res)=>{
         amount: cart.totalPrice,
         currency: currency,
         status: status,
+        paymentMode:type,
+         paymentStatus:'Pending',
         userId: user._id,
         cartId:cart._id,
         address:address[0],
@@ -123,7 +125,7 @@ paymentRouter.post("/payment/webhook",async(req,res)=>{
 
       const payment = await Payment.findOneAndUpdate(
       { orderId: order_id },
-      { status: status },
+      { status: status ,paymentStatus:"Paid"},
       { new: true }
     );
       if (!payment) {

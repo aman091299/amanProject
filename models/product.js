@@ -23,6 +23,14 @@ const productSchema = mongoose.Schema({
     type: Number,
     required: true,
   },
+  stock: {
+  type: Number,
+  default: 0
+},
+isAvailable: {
+  type: Boolean,
+  default: true
+},
   categoryId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Category",
