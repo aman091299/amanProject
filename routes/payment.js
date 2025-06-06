@@ -11,6 +11,12 @@ const paymentRouter=express.Router();
 paymentRouter.post("/payment/create/order",userAuth,async(req,res)=>{
     try {
          const {type}=req.body;
+             if(!type){
+          return  res.status(404).json({
+              success: false,
+              message: "type is required ",
+            });
+         }
 
       const user=req.user;
         const userExist = await User.findById( req.user._id);
@@ -201,6 +207,88 @@ paymentRouter.get("/payment/verify",userAuth,async(req,res)=>{
   }
   catch(error){
   res.status(500).json({
+      success: false,
+      messsage: "Error in payment verification api" + error,
+    });
+  }
+})
+
+paymentRouter.post("/payment/cod",userAuth,async(req,res)=>{
+  try {
+        const user=req.user;
+         const {type}=req.body;
+         if(!type){
+          return  res.status(404).json({
+              success: false,
+              message: "type is required ",
+            });
+         }
+        const userExist = await User.findById( req.user._id);
+      
+          if (!userExist) {
+          return  res.status(404).json({
+              success: false,
+              data:userExist,
+              message: "user does not exist ",
+            });
+          }
+          const address=userExist.addresses.filter(add=> add.isDefault===true);
+
+           if(address.length===0){
+       return   res.status(404).json({
+        success:false,
+        message:"Address does not exist",
+        data:null,
+      })
+    }
+    
+      const cart = await Cart.findOne({ userId:user._id }).populate("items.productId").sort({ createdAt: -1 });
+     
+        if (!cart) {
+          return res.status(200).json({
+            data: [],
+            success: true,
+            message: "Cart does not exist ",
+          });
+        }
+    const createPayment = new Payment({
+        orderId: "COD_"+Date.now(),
+        amount: cart.totalPrice,
+          currency: "INR",
+        status:'created',
+        paymentMode:type,
+         paymentStatus:'Pending',
+        userId: user._id,
+        cartId:cart._id,
+        address:address[0],
+        notes: {
+          firstName: user.firstName,
+          lastName: user.lastName,
+          paymentMethod: user.paymentMethod,
+          address:address,
+          cart:cart._id,
+          emailId:user?.emailId
+        },
+      });
+      await createPayment.save();
+        // Mark cart as ordered
+      cart.status = "ordered";
+      await cart.save();
+
+     const newEmptyCart = new Cart({
+          userId: user._id,
+          items: [],
+          totalPrice: 0,
+        });
+
+        await newEmptyCart.save();
+        return  res.status(200).json({
+              success: true,
+              data:createPayment,
+              message: "COD order placed successfully ",
+            });
+  } catch (error) {
+      res.status(500).json({
       success: false,
       messsage: "Error in payment verification api" + error,
     });
