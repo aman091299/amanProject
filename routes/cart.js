@@ -112,19 +112,22 @@ cartRouter.post("/cart/addItem", identifyGuestAuth, async (req, res) => {
       }
 
         const cartExist = await Cart.findOne({ userId }).populate("items.productId").sort({ createdAt: -1 });
+        console.log("cartExits....",cartExist);
       if (cartExist) {
-        const index = cartExist.items.findIndex(
+            console.log("inside cartExits....");
+           const index = cartExist.items.findIndex(
           (item) => item.productId._id.toString() === productId.toString()
         );
+        console.log("inside cartExits....index",index);
 
         if (index !== -1 && quantity === 0) {
-
+        console.log("inside cartExits....index quantity=0",index,quantity);
           cartExist.items.splice(index, 1);
         } else if (index !== -1) {
-
+   console.log("inside cartExits....index quantity !=0",index,quantity);
           cartExist.items[index].quantity = quantity;
         } else {
-
+   console.log("inside cartExits push....iindex = -1",index,quantity);
           cartExist.items.push({
             productId,
             quantity,
@@ -143,7 +146,7 @@ cartRouter.post("/cart/addItem", identifyGuestAuth, async (req, res) => {
           message: " cart updated Successfully ",
         });
       }
-
+console.log("cart does not exist new cart created");
       const newCart = new Cart({
         items: [
           {
