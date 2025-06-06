@@ -165,4 +165,40 @@ paymentRouter.post("/payment/webhook",async(req,res)=>{
     
 })
 
+paymentRouter.get("/payment/verify",userAuth,async(req,res)=>{
+
+  try{
+     const payment=await Payment.findOne({userId:req.user._id}).sort({createdAt:-1}).lean();
+     if(!payment){
+         res.status(400).json({
+      success:false,
+      messsage: "Payment not found" ,
+      data:payment
+    });
+    }
+    if(payment.paymentStatus==="Paid"){
+    res.status(200).json({
+      success: true,
+      messsage: "Payment Verification Successfully" ,
+      data:payment
+    });
+    }
+    else{
+    res.status(404).json({
+      success: false,
+      messsage: "Payment Verificatin Fail" ,
+      data:payment
+    });
+    }
+     
+   
+  }
+  catch(error){
+  res.status(500).json({
+      success: false,
+      messsage: "Error in payment verification api" + error,
+    });
+  }
+})
+
 module.exports=paymentRouter;
