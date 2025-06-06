@@ -13,7 +13,6 @@ paymentRouter.post("/payment/create/order",userAuth,async(req,res)=>{
          const {type}=req.body;
 
       const user=req.user;
-      console.log("user emaild id",user,user?.emailId)
         const userExist = await User.findById( req.user._id);
       
           if (!userExist) {
@@ -153,7 +152,14 @@ paymentRouter.post("/payment/webhook",async(req,res)=>{
     }
      if (webhookBody.event === "payment.failed") {
       console.log("WEBHOOK payment fail");
-
+      const payment = await Payment.findOneAndUpdate(
+      { orderId: order_id },
+      { status: status},
+      { new: true }
+    );
+     if (!payment) {
+      return res.status(404).json({ message: "Payment record not found" });
+    }
       return res.status(200).json({ message: "WEBHOOK payment fail" });
     }
   } catch (error) {
