@@ -127,7 +127,7 @@ cartRouter.post("/cart/addItem", identifyGuestAuth, async (req, res) => {
    console.log("inside cartExits....index quantity !=0",index,quantity);
           cartExist.items[index].quantity = quantity;
         } else {
-   console.log("inside cartExits push....iindex = -1",index,quantity);
+   console.log("inside cartExits push....iindex = -1 quantity",index,quantity);
           cartExist.items.push({
             productId,
             quantity,
