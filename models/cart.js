@@ -43,6 +43,7 @@ cartSchema.methods.calculateTotalPrice=function(){
        return this.items.reduce((acc,item)=>{
             return  acc +item.quantity*item.price;
         },0)
+        
 }
 const Cart = mongoose.model("Cart", cartSchema);
 

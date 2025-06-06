@@ -133,6 +133,7 @@ cartRouter.post("/cart/addItem", identifyGuestAuth, async (req, res) => {
         }
 
         const totalPrice = cartExist.calculateTotalPrice();
+        console.log('totalPrice.......',totalPrice)
         cartExist.totalPrice = totalPrice;
         await cartExist.save();
 
