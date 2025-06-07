@@ -295,7 +295,7 @@ paymentRouter.post("/payment/cod",userAuth,async(req,res)=>{
   }
 })
 
-paymentRouter.get("/payment/order/summary",async(req,res)=>{
+paymentRouter.get("/payment/order/summary",userAuth,async(req,res)=>{
   try {
 
     req.user.password=undefined;
