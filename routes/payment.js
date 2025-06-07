@@ -334,7 +334,8 @@ paymentRouter.get("/payment/order/summary",userAuth,async(req,res)=>{
       data:{cartData:formattedCart,userDetails:req.user,
         paymentStatus:payment.paymentStatus,
         amount:payment.amount,
-        paymentMode:payment.paymentMode
+        paymentMode:payment.paymentMode,
+        OrderDate:payment.createdAt,
 
       },
     })
