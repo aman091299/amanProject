@@ -377,6 +377,7 @@ paymentRouter.get("/payment/all/order",userAuth,async(req,res)=>{
          const orderItems=cart.items.map(item=>({
         name: item.productId?.name,
         price: item.productId?.price,
+        image:item.productId?.image,
         itemQuantity: item.quantity,
         _id: item.productId?._id,
         combo: item.productId?.combo,
