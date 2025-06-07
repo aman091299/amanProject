@@ -335,7 +335,8 @@ paymentRouter.get("/payment/order/summary",userAuth,async(req,res)=>{
         paymentStatus:payment.paymentStatus,
         amount:payment.amount,
         paymentMode:payment.paymentMode,
-        OrderDate:payment.createdAt,
+        orderDate:payment.createdAt,
+        razorpayOrderId:payment.orderId,
 
       },
     })
