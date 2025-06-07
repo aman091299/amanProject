@@ -323,6 +323,9 @@ paymentRouter.get("/payment/order/summary",userAuth,async(req,res)=>{
           _id: item.productId._id,
           combo: item.productId.combo,
           actualPrice: item.productId.actualPrice,
+          totalPrice:cart.totalPrice,
+          deliveryDate:cart.deliveryDate,
+          deliverySlot:cart.deliverySlot
         }));
      return res.status(200).json({
       success:true,
