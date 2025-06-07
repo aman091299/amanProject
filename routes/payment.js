@@ -297,7 +297,7 @@ paymentRouter.post("/payment/cod",userAuth,async(req,res)=>{
 
 paymentRouter.get("/payment/order/summary",userAuth,async(req,res)=>{
   try {
-    const payment=await Payment.findOne({userId:user.req._id}).sort({createdAt:-1});
+    const payment=await Payment.findOne({userId:req.user._id}).sort({createdAt:-1});
     if(!payment){
       return  res.status(404).json({
       success:false,
@@ -307,7 +307,7 @@ paymentRouter.get("/payment/order/summary",userAuth,async(req,res)=>{
     
     }
     
-    const cart=await Cart.findById(payment.cartId);
+    const  cart=await Cart.findById(payment.cartId).populate("items.productId");
        if(!cart){
      return   res.status(404).json({
       success:false,
@@ -316,13 +316,22 @@ paymentRouter.get("/payment/order/summary",userAuth,async(req,res)=>{
     })
     
     }
+      const formattedCart = cart?.items?.map((item) => ({
+          name: item.productId.name,
+          price: item.productId.price,
+          itemQuantity: item.quantity,
+          _id: item.productId._id,
+          combo: item.productId.combo,
+          actualPrice: item.productId.actualPrice,
+        }));
      return res.status(200).json({
       success:true,
       message:"Cart details founded successfully",
-      data:cart,
+      data:formattedCart,
     })
     
   } catch (error) {
+      console.error("Error in /payment/order/summary:", error);
    return res.status(500).json({
       success:false,
       message:"Error in order summary "+ error,
