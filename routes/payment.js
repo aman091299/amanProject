@@ -350,4 +350,70 @@ paymentRouter.get("/payment/order/summary",userAuth,async(req,res)=>{
   }
 })
 
+paymentRouter.get("/payment/all/order",userAuth,async(req,res)=>{
+  try {
+        const userId=req.user._id;
+     req.user.password=undefined;
+    const payments=await Payment.find({userId}).populate({
+      path:'cartId',
+      populate:{
+        path:"items.productId"
+      }
+    });
+    if(!payments || payments.length===0){
+      return  res.status(404).json({
+      success:false,
+      message:"Payment not found",
+      data:null
+    })
+    
+    }
+
+
+    const allOrders=payments.map((payment)=>{
+         const cart=payment.cartId;
+         if(!cart || !cart.items) return null;
+
+         const orderItems=cart.items.map(item=>({
+        name: item.productId?.name,
+        price: item.productId?.price,
+        itemQuantity: item.quantity,
+        _id: item.productId?._id,
+        combo: item.productId?.combo,
+        actualPrice: item.productId?.actualPrice,}
+         ))
+
+
+      return{
+           items: orderItems,
+        orderId: payment.orderId,
+        orderDate: cart.updatedAt,
+        deliveryDate: cart.deliveryDate,
+        deliverySlot: cart.deliverySlot,
+        totalPrice: cart.totalPrice,
+        paymentStatus: payment.paymentStatus,
+        status: cart.status,
+
+      }
+    }).filter(Boolean);
+
+
+
+     return res.status(200).json({
+      success: true,
+      message: "All user orders fetched successfully",
+      data: {
+        orders: allOrders,
+        userDetails: req.user,
+      },
+    });
+      
+  } catch (error) {
+       res.status(500).json({
+        success: false,
+        message: "Error while getting cart item : " + error,
+      });
+  }
+})
+
 module.exports=paymentRouter;
