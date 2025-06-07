@@ -297,6 +297,8 @@ paymentRouter.post("/payment/cod",userAuth,async(req,res)=>{
 
 paymentRouter.get("/payment/order/summary",userAuth,async(req,res)=>{
   try {
+
+    req.user.password=undefined;
     const payment=await Payment.findOne({userId:req.user._id}).sort({createdAt:-1});
     if(!payment){
       return  res.status(404).json({
@@ -330,7 +332,7 @@ paymentRouter.get("/payment/order/summary",userAuth,async(req,res)=>{
      return res.status(200).json({
       success:true,
       message:"Cart details founded successfully",
-      data:formattedCart,
+      data:{cartData:formattedCart,userDetails:req.user},
     })
     
   } catch (error) {
