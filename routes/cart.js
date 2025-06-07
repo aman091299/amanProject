@@ -314,4 +314,43 @@ cartRouter.post("/cart/merge", identifyGuestAuth, async (req, res) => {
   }
 });
 
+cartRouter.post("/cart/deliverySlot",userAuth,async(req,res)=>{
+  try{
+    const {deliveryDate,deliverySlot}=req.body;
+       if (!deliverySlot) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Delivery slot is required" });
+    }
+      if (!deliveryDate) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Delivery date is required" });
+    }
+      const cart =await Cart.findOne({userId:req.user._id}).sort({createdAt:-1});
+
+       if (!cart) {
+    return  res.status(404).json({
+        success: false,
+        message: "Cart do not exist",
+      });
+    }
+    cart.deliveryDate=deliveryDate;
+    cart.deliverySlot=deliverySlot;
+    await cart.save();
+
+        return  res.status(200).json({
+        success: true,
+        message: "Cart delivery data and time added successfully",
+      });
+
+  }
+  catch(err){
+    res.status(500).json({
+      success: false,
+      message: "Error creating delivery slot and data: " + err,
+    });
+  }
+})
+
 module.exports = cartRouter;

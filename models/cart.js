@@ -32,7 +32,16 @@ const cartSchema = new mongoose.Schema(
   type: String,
   enum: ['active', 'ordered'],
   default: 'active'
-},
+
+    } ,  
+   deliveryDate: {
+    type: String, // '07-06-2025'
+  
+  },
+  deliverySlot: {
+    type: String, // '6:00 - 8:00 pm'
+
+  },
   },
   { timestamps: true }
 );
