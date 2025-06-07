@@ -295,4 +295,39 @@ paymentRouter.post("/payment/cod",userAuth,async(req,res)=>{
   }
 })
 
+paymentRouter.get("/payment/order/summary",userAuth,async(req,res)=>{
+  try {
+    const payment=await Payment.findOne({userId:user.req._id}).sort({createdAt:-1});
+    if(!payment){
+      return  res.status(404).json({
+      success:false,
+      message:"Payment not found",
+      data:null
+    })
+    
+    }
+    
+    const cart=await Cart.findById(payment.cartId);
+       if(!cart){
+     return   res.status(404).json({
+      success:false,
+      message:"Cart not found",
+      data:null
+    })
+    
+    }
+     return res.status(200).json({
+      success:true,
+      message:"Cart details founded successfully",
+      data:cart,
+    })
+    
+  } catch (error) {
+   return res.status(500).json({
+      success:false,
+      message:"Error in order summary "+ error,
+    })
+  }
+})
+
 module.exports=paymentRouter;
