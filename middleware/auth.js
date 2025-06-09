@@ -11,6 +11,8 @@ const verifyToken = async (req, res) => {
   // Fallback to cookies if no header token found
   if (!token && req.cookies?.token) {
     token = req.cookies.token;
+      console.log("inside cookies",token)
+
   }
   if (!token) {
     return res
