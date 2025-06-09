@@ -89,7 +89,7 @@ couponRouter.post("/coupon/apply",userAuth,async(req,res)=>{
       return res.status(400).json({ success: false, message: "Coupon code is required" });
     }
 
-       const coupon=await Coupon.findOne({code,isActive:true});
+       const coupon=await Coupon.findOne({code:code.toUpperCase(),isActive:true});
           if(!coupon){
             return  res.status(404).json({
             success:false,
@@ -195,7 +195,7 @@ couponRouter.post("/coupon/remove",userAuth,async(req,res)=>{
       cart.totalPrice +=discount;
     cart.discount=0;
     cart.couponId=null;
-    
+
       await cart.save();
 
     res.status(200).json({
@@ -212,6 +212,7 @@ couponRouter.post("/coupon/remove",userAuth,async(req,res)=>{
     })
     }
 })
+
 couponRouter.get("/coupon/all",userAuth,async(req,res)=>{
     try {
         
