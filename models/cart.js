@@ -42,6 +42,19 @@ const cartSchema = new mongoose.Schema(
     type: String, // '6:00 - 8:00 pm'
 
   },
+  couponId:{
+    type:mongoose.Schema.Types.ObjectId,
+    ref:'Coupon',
+    default:null,
+  },
+  discount:{
+    type:Number,
+    default:0,
+  },
+   originalTotalPrice:{
+    type:Number,
+    default:0,
+  },
   },
   { timestamps: true }
 );
