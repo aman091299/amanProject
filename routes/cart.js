@@ -63,6 +63,7 @@ cartRouter.post("/cart/addItem", identifyGuestAuth, async (req, res) => {
             });
           }
         }
+        guestedCart.totalPrice=guestedCart.reduce((sum,item)=>sum + item.itemQuantity*price,0);
         res.cookie("guestedCart", JSON.stringify(guestedCart), {
           expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
               secure: true,
@@ -88,7 +89,7 @@ cartRouter.post("/cart/addItem", identifyGuestAuth, async (req, res) => {
             actualPrice: actualPrice,
           },
         ];
-
+         cart.totalPrice=actualPrice
         res.cookie("guestedCart", JSON.stringify(cart), {
           expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
             secure: true,
@@ -182,7 +183,7 @@ cartRouter.get( "/cart/viewAllCartItems",identifyGuestAuth, async (req, res) => 
           : [];
           console.log("guestedCarrt",cart);
         return res.status(200).json({
-          data: cart,
+          data: {cart,totalPrice:cart.totalPrice},
           success: true,
           message: "Gotten guested cart data successfully",
         });
@@ -216,7 +217,7 @@ cartRouter.get( "/cart/viewAllCartItems",identifyGuestAuth, async (req, res) => 
         }));
 
         return res.status(200).json({
-          data: newCart,
+          data: {newCart,totalPrice:cart.totalPrice},
           success: true,
           message: "Getting cart data successfully",
         });
@@ -277,7 +278,7 @@ cartRouter.post("/cart/merge", identifyGuestAuth, async (req, res) => {
          res.clearCookie('guestedCart');
         return res.status(200).json({
           success: true,
-          data: newCart,
+          data: {newCart,totalPrice:updatedCart.totalPrice},
           message: "Cart merge successfully with guested Item",
         });
       } else {
@@ -299,7 +300,7 @@ cartRouter.post("/cart/merge", identifyGuestAuth, async (req, res) => {
 
         return res.status(200).json({
           success: true,
-          data: guestedCart,
+          data: {guestedCart,totalPrice},
           message: "After data merge cart created successfully ",
         });
       }
