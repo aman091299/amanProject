@@ -158,8 +158,7 @@ couponRouter.post("/coupon/apply",userAuth,async(req,res)=>{
                          discount=coupon.maxDiscount;
                 }
             }
-            cart.originalTotalPrice=cart.totalPrice;
-          cart.totalPrice=cart.originalTotalPrice-discount;
+          cart.totalPrice=cart.totalPrice-discount;
           cart.discount=discount;
           cart.couponId = coupon._id;
            await cart.save();
@@ -184,6 +183,28 @@ couponRouter.post("/coupon/apply",userAuth,async(req,res)=>{
   }
 })
 
+couponRouter.post('/coupon/cart',userAuth,async(req,res)=>{
+   try {
+      const  cart=await Cart.findOne(req.user._id).sort({createdAt:-1}).populate('couponId');
+      if(!cart){
+       return res.status(404).json({
+          data:cart,
+          success:false,
+          message:"Cart not found"
+        })
+      }
+       return res.status(200).json({
+          data:cart.couponId.name,
+          success:false,
+          message:"Coupon fetched successfully"
+        })
+   } catch (error) {
+           return  res.status(500).json({
+         success: false,
+         message: "Error in apply coupon " +error
+    })
+   }
+})
 
 couponRouter.post("/coupon/remove",userAuth,async(req,res)=>{
     try {
@@ -212,6 +233,7 @@ couponRouter.post("/coupon/remove",userAuth,async(req,res)=>{
     })
     }
 })
+
 
 couponRouter.get("/coupon/all",userAuth,async(req,res)=>{
     try {
