@@ -212,7 +212,7 @@ cartRouter.get( "/cart/viewAllCartItems",identifyGuestAuth, async (req, res) => 
         }));
 
         return res.status(200).json({
-          data: {newCart,totalPrice:cart.totalPrice,discount:cart.discount, originalTotalPrice:cart.originalTotalPrice},
+          data: {cart:newCart,totalPrice:cart.totalPrice,discount:cart.discount, originalTotalPrice:cart.originalTotalPrice},
           success: true,
           message: "Getting cart data successfully",
         });
