@@ -5,8 +5,9 @@ const authRouter=require('./routes/auth.js');
 const profileRouter=require('./routes/profile.js');
 const  productRouter=require('./routes/product.js');
 const categoryRouter=require('./routes/category.js');
-const paymentRouter=require('./routes/payment.js')
-const cartRouter=require('./routes/cart.js')
+const paymentRouter=require('./routes/payment.js');
+const cartRouter=require('./routes/cart.js');
+const couponRouter=require("./routes/coupon.js");
 const cookieParser=require('cookie-parser');
 const express=require('express');
 const app=express();
@@ -27,6 +28,7 @@ app.use('/',productRouter);
 app.use('/',categoryRouter);
 app.use('/',cartRouter);
 app.use('/',paymentRouter);
+app.use('/',couponRouter);
 
 const port=process.env.PORT || 3000;
 

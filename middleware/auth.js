@@ -6,7 +6,7 @@ const verifyToken = async (req, res) => {
 
  const authHeader = req.headers.authorization;
    token = authHeader && authHeader.split(" ")[1]; // "Bearer <token>"
-       console.log("token...2",token)
+       console.log("token auth Header... ",token)
 
   // Fallback to cookies if no header token found
   if (!token && req.cookies?.token) {
