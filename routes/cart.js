@@ -66,7 +66,7 @@ cartRouter.post("/cart/addItem", identifyGuestAuth, async (req, res) => {
           }
         }
         guestedCart.totalPrice=guestedCart?.reduce((sum,item)=>sum + item.itemQuantity*item.price,0);
-        guestedCart.originalTotalPrice=totalPrice;
+        guestedCart.originalTotalPrice=guestedCart.totalPrice;
         res.cookie("guestedCart", JSON.stringify(guestedCart), {
           expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
               secure: true,
