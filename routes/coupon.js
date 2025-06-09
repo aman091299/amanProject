@@ -183,7 +183,7 @@ couponRouter.post("/coupon/apply",userAuth,async(req,res)=>{
   }
 })
 
-couponRouter.post('/coupon/cart',userAuth,async(req,res)=>{
+couponRouter.get('/coupon/cart',userAuth,async(req,res)=>{
    try {
       const  cart=await Cart.findOne(req.user._id).sort({createdAt:-1}).populate('couponId');
       if(!cart){
