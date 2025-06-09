@@ -159,7 +159,7 @@ couponRouter.post("/coupon/apply",userAuth,async(req,res)=>{
                 }
             }
             cart.originalTotalPrice=cart.totalPrice;
-          cart.totalPrice=cart.totalPrice-discount;
+          cart.totalPrice=cart.originalTotalPrice-discount;
           cart.discount=discount;
           cart.couponId = coupon._id;
            await cart.save();
