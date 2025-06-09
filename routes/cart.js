@@ -38,7 +38,6 @@ cartRouter.post("/cart/addItem", identifyGuestAuth, async (req, res) => {
       const guestedCart = req.cookies.guestedCart
         ? JSON.parse(req.cookies.guestedCart)
         : [];
-        console.log("guested cart",guestedCart)
       if (guestedCart.length !== 0) {
         //it has cart so update the cart
         const index = guestedCart.findIndex(
@@ -64,6 +63,7 @@ cartRouter.post("/cart/addItem", identifyGuestAuth, async (req, res) => {
           }
         }
         guestedCart.totalPrice=guestedCart.reduce((sum,item)=>sum + item.itemQuantity*price,0);
+        guestedCart.originalTotalPrice=totalPrice;
         res.cookie("guestedCart", JSON.stringify(guestedCart), {
           expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
               secure: true,
@@ -89,14 +89,15 @@ cartRouter.post("/cart/addItem", identifyGuestAuth, async (req, res) => {
             actualPrice: actualPrice,
           },
         ];
-         cart.totalPrice=actualPrice
+         cart.totalPrice=actualPrice;
+         cart.originalTotalPrice=actualPrice;
         res.cookie("guestedCart", JSON.stringify(cart), {
           expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
             secure: true,
           sameSite: "none",
           httpOnly: true,  
         });
-        res.status(200).json({
+       return res.status(200).json({
           success: true,
           data: cart,
           message: "Successfully guested cart add in cookies",
@@ -113,22 +114,16 @@ cartRouter.post("/cart/addItem", identifyGuestAuth, async (req, res) => {
       }
 
         const cartExist = await Cart.findOne({ userId }).populate("items.productId").sort({ createdAt: -1 });
-        console.log("cartExits....",cartExist);
       if (cartExist) {
-            console.log("inside cartExits....");
            const index = cartExist.items.findIndex(
           (item) => item.productId._id.toString() === productId.toString()
         );
-        console.log("inside cartExits....index",index);
 
         if (index !== -1 && quantity === 0) {
-        console.log("inside cartExits....index quantity=0",index,quantity);
           cartExist.items.splice(index, 1);
         } else if (index !== -1) {
-   console.log("inside cartExits....index quantity !=0",index,quantity,"price",cartExist.items[index].price);
           cartExist.items[index].quantity = quantity;
         } else {
-   console.log("inside cartExits push....iindex = -1 quantity",index,quantity,"price",product.price);
           cartExist.items.push({
             productId,
             quantity,
@@ -137,8 +132,9 @@ cartRouter.post("/cart/addItem", identifyGuestAuth, async (req, res) => {
         }
 
         const totalPrice = cartExist.calculateTotalPrice();
-        console.log('totalPrice.......',totalPrice)
         cartExist.totalPrice = totalPrice;
+        cartExist.originalTotalPrice=totalPrice;
+
         await cartExist.save();
 
         return res.status(200).json({
@@ -147,7 +143,6 @@ cartRouter.post("/cart/addItem", identifyGuestAuth, async (req, res) => {
           message: " cart updated Successfully ",
         });
       }
-console.log("cart does not exist new cart created");
       const newCart = new Cart({
         items: [
           {
@@ -158,6 +153,7 @@ console.log("cart does not exist new cart created");
         ],
         userId,
         totalPrice: product.price,
+         originalTotalPrice:product.price
       });
       await newCart.save();
 
@@ -181,7 +177,6 @@ cartRouter.get( "/cart/viewAllCartItems",identifyGuestAuth, async (req, res) => 
         const cart = req.cookies.guestedCart
           ? JSON.parse(req.cookies.guestedCart)
           : [];
-          console.log("guestedCarrt",cart);
         return res.status(200).json({
           data: {cart,totalPrice:cart.totalPrice},
           success: true,
@@ -217,7 +212,7 @@ cartRouter.get( "/cart/viewAllCartItems",identifyGuestAuth, async (req, res) => 
         }));
 
         return res.status(200).json({
-          data: {newCart,totalPrice:cart.totalPrice,discount:cart.discount},
+          data: {newCart,totalPrice:cart.totalPrice,discount:cart.discount, originalTotalPrice:cart.originalTotalPrice},
           success: true,
           message: "Getting cart data successfully",
         });
@@ -265,6 +260,7 @@ cartRouter.post("/cart/merge", identifyGuestAuth, async (req, res) => {
         });
         const totalPrice = cartExist.calculateTotalPrice();
         cartExist.totalPrice = totalPrice;
+        cartExist.originalTotalPrice=totalPrice;
         await cartExist.save();
         const updatedCart = await Cart.findOne({ userId }).populate("items.productId").sort({ createdAt: -1 });
         const newCart = updatedCart?.items?.map((item) => ({
@@ -278,7 +274,7 @@ cartRouter.post("/cart/merge", identifyGuestAuth, async (req, res) => {
          res.clearCookie('guestedCart');
         return res.status(200).json({
           success: true,
-          data: {newCart,totalPrice:updatedCart.totalPrice},
+          data: {newCart,totalPrice:updatedCart, originalTotalPrice:updatedCart.totalPrice},
           message: "Cart merge successfully with guested Item",
         });
       } else {
@@ -294,13 +290,14 @@ cartRouter.post("/cart/merge", identifyGuestAuth, async (req, res) => {
         });
           const totalPrice = cart.calculateTotalPrice();
         cart.totalPrice = totalPrice;
+         cart.originalTotalPrice=totalPrice;
         await cart.save();
 
         res.clearCookie('guestedCart');
 
         return res.status(200).json({
           success: true,
-          data: {guestedCart,totalPrice},
+          data: {guestedCart,totalPrice,originalTotalPrice},
           message: "After data merge cart created successfully ",
         });
       }
