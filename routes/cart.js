@@ -28,7 +28,7 @@ cartRouter.post("/cart/addItem", identifyGuestAuth, async (req, res) => {
     if (!product) {
     return  res.status(404).json({
         success: false,
-        message: "Product do not exist",
+        message: "Product not exist",
       });
     }
 
@@ -47,9 +47,12 @@ cartRouter.post("/cart/addItem", identifyGuestAuth, async (req, res) => {
 
         if (index !== -1 && quantity === 0) {
           guestedCart.splice(index, 1);
+
         } else if (index !== -1) {
           guestedCart[index].itemQuantity = quantity;
+
         } else {
+
           if (quantity !== 0) {
             const { name, price, _id, combo, actualPrice } = product;
             guestedCart.push({
@@ -62,7 +65,7 @@ cartRouter.post("/cart/addItem", identifyGuestAuth, async (req, res) => {
             });
           }
         }
-        guestedCart.totalPrice=guestedCart.reduce((sum,item)=>sum + item.itemQuantity*price,0);
+        guestedCart.totalPrice=guestedCart?.reduce((sum,item)=>sum + item.itemQuantity*item.price,0);
         guestedCart.originalTotalPrice=totalPrice;
         res.cookie("guestedCart", JSON.stringify(guestedCart), {
           expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
