@@ -206,7 +206,7 @@ couponRouter.get('/coupon/cart',userAuth,async(req,res)=>{
    }
 })
 
-couponRouter.post("/coupon/remove",userAuth,async(req,res)=>{
+couponRouter.get("/coupon/remove",userAuth,async(req,res)=>{
     try {
    const cart = await Cart.findOne({ userId: req.user._id }).sort({createdAt:-1});
 
