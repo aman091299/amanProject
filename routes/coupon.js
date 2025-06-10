@@ -88,7 +88,7 @@ couponRouter.post("/coupon/apply",userAuth,async(req,res)=>{
 
          const { code } = req.body;
     if (!code) {
-      return res.status(400).json({ success: false, message: "Coupon code is required" });
+      return res.status(400).json({data:null, success: false, message: "Coupon code is required" });
     }
 
      const cart = await Cart.findOne({ userId: req.user._id }).sort({ createdAt: -1 })
