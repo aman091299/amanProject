@@ -212,7 +212,7 @@ cartRouter.get( "/cart/viewAllCartItems",identifyGuestAuth, async (req, res) => 
           });
         }
 
-        const newCart = cart?.items?.map((item) => ({
+        const items = cart?.items?.map((item) => ({
           name: item.productId.name,
           price: item.productId.price,
           itemQuantity: item.quantity,
@@ -220,9 +220,12 @@ cartRouter.get( "/cart/viewAllCartItems",identifyGuestAuth, async (req, res) => 
           combo: item.productId.combo,
           actualPrice: item.productId.actualPrice,
         }));
-
+        const newCart={
+          items,totalPrice,originalTotalPrice
+        }
+        
         return res.status(200).json({
-          data: {cart:newCart,totalPrice:cart.totalPrice,discount:cart.discount, originalTotalPrice:cart.originalTotalPrice},
+          data: newCart,
           success: true,
           message: "Getting cart data successfully",
         });
