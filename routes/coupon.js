@@ -235,7 +235,7 @@ couponRouter.get("/coupon/remove",userAuth,async(req,res)=>{
 })
 
 
-couponRouter.get("/coupon/all",userAuth,async(req,res)=>{
+couponRouter.get("/coupon/all",async(req,res)=>{
     try {
         
         const coupons=await Coupon.find({isActive:true});
