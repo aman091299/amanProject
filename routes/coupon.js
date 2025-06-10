@@ -194,7 +194,7 @@ couponRouter.get('/coupon/cart',userAuth,async(req,res)=>{
         })
       }
        return res.status(200).json({
-          data:cart.couponId.code,
+          data:cart?.couponId?.code,
           success:true,
           message:"Coupon fetched successfully"
         })
@@ -217,7 +217,7 @@ couponRouter.get("/coupon/remove",userAuth,async(req,res)=>{
     if(!cart.couponId){
       return res.status(404).json({ success: false, message: "No coupon to remove" });
     }
-       cart.totalPrice =cart.originalTotalPrice;
+    cart.totalPrice =cart.originalTotalPrice;
     cart.discount=0;
     cart.couponId=null;
 
