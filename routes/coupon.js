@@ -101,7 +101,15 @@ couponRouter.post("/coupon/apply",userAuth,async(req,res)=>{
                                                                                 });;
 
           if(!cart){
-               return  res.status(404).json({
+               return  res.status(404).json({        
+              data:{
+            code,
+            discount:0,
+            discountValue:0,
+            cart:null,
+            actualTotalPrice:0,
+            totalPrice:0,
+        },
             success:false,
             message:"Cart not founded"
         })
@@ -114,17 +122,44 @@ couponRouter.post("/coupon/apply",userAuth,async(req,res)=>{
        const coupon=await Coupon.findOne({code:code.toUpperCase(),isActive:true});
           if(!coupon){
             return  res.status(404).json({
+            data:{
+            code,
+            discount:cart.discount,
+            discountValue:coupon.discountValue,
+            cart:cart,
+            actualTotalPrice: cart.originalTotalPrice,
+            totalPrice:cart.totalPrice,
+        },
             success:false,
             message:"Invalid coupon"
         })
           }
           if (coupon.expiresAt && new Date(coupon.expiresAt) < new Date()) {
-           return res.status(400).json({ success: false, message: "Coupon has expired" });
+           return res.status(400).json({ success: false,
+                    data:{
+            code,
+            discount:cart.discount,
+            discountValue:coupon.discountValue,
+            cart:cart,
+            actualTotalPrice: cart.originalTotalPrice,
+            totalPrice:cart.totalPrice,
+        },
+             message: "Coupon has expired" });
     }
           const isOldUser=await Payment.findOne({userId:req.user._id});
 
            if (coupon.isNewUserOnly && isOldUser) {
-                  return res.status(400).json({ success: false, message: "Only for new users" });
+                  return res.status(400).json({ 
+                    success: false, 
+            data:{
+            code,
+            discount:cart.discount,
+            discountValue:coupon.discountValue,
+            cart:cart,
+            actualTotalPrice: cart.originalTotalPrice,
+            totalPrice:cart.totalPrice,
+        },
+                    message: "Only for new users" });
             }
 
         
@@ -152,6 +187,14 @@ couponRouter.post("/coupon/apply",userAuth,async(req,res)=>{
 
             if (coupon.minCartValue > eligibleAmount) {
             return res.status(400).json({
+                    data:{
+            code,
+            discount:cart.discount,
+            discountValue:coupon.discountValue,
+            cart:cart,
+            actualTotalPrice: cart.originalTotalPrice,
+            totalPrice:cart.totalPrice,
+        },
                 success: false,
                 message: `Your eligible cart value is below minimum ₹${coupon.minCartValue}`,
             });
@@ -177,7 +220,7 @@ couponRouter.post("/coupon/apply",userAuth,async(req,res)=>{
         message:"Coupon code applied successfully",
         data:{
             code,
-            discount,
+            discount:cart.discount,
             discountValue:coupon.discountValue,
             cart:cart,
             actualTotalPrice: cart.originalTotalPrice,
