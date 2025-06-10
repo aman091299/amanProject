@@ -95,8 +95,8 @@ cartRouter.post("/cart/addItem", identifyGuestAuth, async (req, res) => {
             actualPrice: actualPrice,
           },
         ];
-         cart[0].totalPrice=actualPrice;
-         cart[0].originalTotalPrice=actualPrice;
+         cart.totalPrice=actualPrice;
+         cart.originalTotalPrice=actualPrice;
         res.cookie("guestedCart", JSON.stringify(cart), {
           expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
             secure: true,
