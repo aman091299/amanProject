@@ -286,7 +286,7 @@ cartRouter.post("/cart/merge", identifyGuestAuth, async (req, res) => {
         }));
          res.clearCookie('guestedCart');
          const cartObj={
-          newCart,
+          items:newCart,
           totalPrice:cartExist.totalPrice,
           originalTotalPrice:cartExist.totalPrice,
          }
