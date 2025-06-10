@@ -193,6 +193,13 @@ couponRouter.get('/coupon/cart',userAuth,async(req,res)=>{
           message:"Cart not found"
         })
       }
+      if(!cart?.couponId){
+       return res.status(400).json({
+          data:null,
+          success:true,
+          message:"Coupon fetched successfully"
+        })
+      }
        return res.status(200).json({
           data:cart?.couponId?.code,
           success:true,
