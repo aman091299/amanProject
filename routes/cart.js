@@ -101,7 +101,7 @@ cartRouter.post("/cart/addItem", identifyGuestAuth, async (req, res) => {
               originalTotalPrice:actualPrice,
             };
          console.log("cart for first time",guestedCart);
-        res.cookie("guestedCart", JSON.stringify(cart), {
+        res.cookie("guestedCart", JSON.stringify(guestedCart), {
           expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
             secure: true,
           sameSite: "none",
@@ -225,7 +225,7 @@ cartRouter.get( "/cart/viewAllCartItems",identifyGuestAuth, async (req, res) => 
         }
         
         return res.status(200).json({
-          data: newCart,
+          data: {cart:newCart},
           success: true,
           message: "Getting cart data successfully",
         });
