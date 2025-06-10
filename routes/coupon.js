@@ -213,9 +213,13 @@ couponRouter.get("/coupon/remove",userAuth,async(req,res)=>{
     if (!cart) {
       return res.status(404).json({ success: false, message: "Cart not found" });
     }
-      cart.totalPrice +=cart.discount;
+     if(!cart.couponId){
+      return res.status(404).json({ success: false, message: "Coupon not found" });
+    }
+      cart.totalPrice =cart.originalTotalPrice;
     cart.discount=0;
     cart.couponId=null;
+   
 
       await cart.save();
 
