@@ -208,7 +208,7 @@ couponRouter.get('/coupon/cart',userAuth,async(req,res)=>{
 
 couponRouter.get("/coupon/remove",userAuth,async(req,res)=>{
     try {
-   const cart = await Cart.findOne({ userId: req.user._id }).sort({createdAt:-1});
+   const cart = await Car.findOne({ userId: req.user._id }).sort({createdAt:-1});
 
     if (!cart) {
       return res.status(404).json({ success: false, message: "Cart not found" });
