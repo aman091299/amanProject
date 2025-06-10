@@ -188,7 +188,7 @@ cartRouter.get( "/cart/viewAllCartItems",identifyGuestAuth, async (req, res) => 
           ? JSON.parse(req.cookies.guestedCart)
           : [];
         return res.status(200).json({
-          data: {cart},
+          data: cart,
           success: true,
           message: "Gotten guested cart data successfully",
         });
