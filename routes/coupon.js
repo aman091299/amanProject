@@ -84,11 +84,33 @@ couponRouter.post("/coupon/create",adminAuth,async(req,res)=>{
 
 couponRouter.post("/coupon/apply",userAuth,async(req,res)=>{
     try {
+ 
+
          const { code } = req.body;
     if (!code) {
       return res.status(400).json({ success: false, message: "Coupon code is required" });
     }
 
+     const cart = await Cart.findOne({ userId: req.user._id }).sort({ createdAt: -1 })
+                                                                                .populate({
+                                                                                    path: 'items.productId',
+                                                                                    populate: {
+                                                                                    path: 'categoryId', // This refers to the field in Product schema
+                                                                                    select: 'slug' // Only bring in what you need
+                                                                                    }
+                                                                                });;
+
+          if(!cart){
+               return  res.status(404).json({
+            success:false,
+            message:"Cart not founded"
+        })
+            }                                                                       
+      cart.totalPrice =cart.originalTotalPrice;
+    cart.discount=0;
+    cart.couponId=null;
+
+      await cart.save();
        const coupon=await Coupon.findOne({code:code.toUpperCase(),isActive:true});
           if(!coupon){
             return  res.status(404).json({
@@ -105,21 +127,8 @@ couponRouter.post("/coupon/apply",userAuth,async(req,res)=>{
                   return res.status(400).json({ success: false, message: "Only for new users" });
             }
 
-         const cart = await Cart.findOne({ userId: req.user._id }).sort({ createdAt: -1 })
-                                                                                .populate({
-                                                                                    path: 'items.productId',
-                                                                                    populate: {
-                                                                                    path: 'categoryId', // This refers to the field in Product schema
-                                                                                    select: 'slug' // Only bring in what you need
-                                                                                    }
-                                                                                });;
-            if(!cart){
-               return  res.status(404).json({
-            success:false,
-            message:"Cart not founded"
-        })
-            }
-
+        
+          
 
                let eligibleAmount = cart.totalPrice;
             //checking for category based discount
