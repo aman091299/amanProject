@@ -40,7 +40,7 @@ cartRouter.post("/cart/addItem", identifyGuestAuth, async (req, res) => {
         : [];
       if (guestedCart.length !== 0) {
         //it has cart so update the cart
-        const index = guestedCart.findIndex(
+        const index = guestedCart.items.findIndex(
           (cartItem) => cartItem._id === productId
         );
         //now if we find the index
@@ -66,7 +66,6 @@ cartRouter.post("/cart/addItem", identifyGuestAuth, async (req, res) => {
           }
         }
      
-         console.log("gusetedcart1",guestedCart);
         const totalPrice=guestedCart?.reduce((sum,item)=>sum + item.itemQuantity*item.price,0);
 
            const cart = {
@@ -74,8 +73,7 @@ cartRouter.post("/cart/addItem", identifyGuestAuth, async (req, res) => {
               totalPrice: totalPrice,
               originalTotalPrice:totalPrice,
             };
-         console.log("gusetedcart totalprice",cart.totalPrice);
-        console.log("gusetedcart2",cart);
+
         res.cookie("guestedCart", JSON.stringify(cart), {
           expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
               secure: true,
