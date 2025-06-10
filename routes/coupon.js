@@ -214,7 +214,10 @@ couponRouter.get("/coupon/remove",userAuth,async(req,res)=>{
       return res.status(404).json({ success: false, message: "Cart not found" });
     }
      if(!cart.couponId){
-      return res.status(404).json({ success: false, message: "Coupon not found" });
+      return res.status(404).json({ 
+     success: true,
+      message: "No coupon to remove",
+      cart, });
     }
       cart.totalPrice =cart.originalTotalPrice;
     cart.discount=0;
