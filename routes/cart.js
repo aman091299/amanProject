@@ -255,7 +255,7 @@ cartRouter.post("/cart/merge", identifyGuestAuth, async (req, res) => {
 
       if (cartExist) {
         //Now we are updating the user product quantity
-        guestedCart.forEach((guestedItem) => {
+        guestedCart.items.forEach((guestedItem) => {
           const existingItem = cartExist.items.find(
             (item) =>
               item.productId._id.toString() === guestedItem._id.toString()
@@ -285,9 +285,14 @@ cartRouter.post("/cart/merge", identifyGuestAuth, async (req, res) => {
           actualPrice: item.productId.actualPrice,
         }));
          res.clearCookie('guestedCart');
+         const cartObj={
+          newCart,
+          totalPrice:cartExist.totalPrice,
+          originalTotalPrice:cartExist.totalPrice,
+         }
         return res.status(200).json({
           success: true,
-          data: {newCart,totalPrice:updatedCart, originalTotalPrice:updatedCart.totalPrice},
+          data: newCart,
           message: "Cart merge successfully with guested Item",
         });
       } else {
