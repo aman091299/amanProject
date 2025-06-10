@@ -46,16 +46,16 @@ cartRouter.post("/cart/addItem", identifyGuestAuth, async (req, res) => {
         //now if we find the index
 
         if (index !== -1 && quantity === 0) {
-          guestedCart.splice(index, 1);
+          guestedCart.items.splice(index, 1);
 
         } else if (index !== -1) {
-          guestedCart[index].itemQuantity = quantity;
+          guestedCart.items[index].itemQuantity = quantity;
 
         } else {
 
           if (quantity !== 0) {
             const { name, price, _id, combo, actualPrice } = product;
-            guestedCart.push({
+            guestedCart.items.push({
               itemQuantity: quantity,
               name: name,
               price: price,
@@ -66,15 +66,17 @@ cartRouter.post("/cart/addItem", identifyGuestAuth, async (req, res) => {
           }
         }
      
-        const totalPrice=guestedCart?.reduce((sum,item)=>sum + item.itemQuantity*item.price,0);
+        const totalPrice=guestedCart.items?.reduce((sum,item)=>sum + item.itemQuantity*item.price,0);
 
-           const cart = {
-              items: guestedCart,
-              totalPrice: totalPrice,
-              originalTotalPrice:totalPrice,
-            };
+          //  const cart = {
+          //     items: guestedCart,
+          //     totalPrice: totalPrice,
+          //     originalTotalPrice:totalPrice,
+          //   };
+          guestedCart.totalPrice=totalPrice;
+          guestedCart.originalTotalPrice=totalPrice;
 
-        res.cookie("guestedCart", JSON.stringify(cart), {
+        res.cookie("guestedCart", JSON.stringify(guestedCart), {
           expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
               secure: true,
           sameSite: "none",
