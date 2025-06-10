@@ -221,11 +221,11 @@ cartRouter.get( "/cart/viewAllCartItems",identifyGuestAuth, async (req, res) => 
           actualPrice: item.productId.actualPrice,
         }));
         const newCart={
-          items,totalPrice,originalTotalPrice
+          items,totalPrice:cart.totalPrice,originalTotalPrice:cart.originalTotalPrice
         }
         
         return res.status(200).json({
-          data: {cart:newCart},
+          data: newCart,
           success: true,
           message: "Getting cart data successfully",
         });
