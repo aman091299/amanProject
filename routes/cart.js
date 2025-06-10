@@ -65,12 +65,18 @@ cartRouter.post("/cart/addItem", identifyGuestAuth, async (req, res) => {
             });
           }
         }
+     
          console.log("gusetedcart1",guestedCart);
-        guestedCart.totalPrice=guestedCart?.reduce((sum,item)=>sum + item.itemQuantity*item.price,0);
-        guestedCart.originalTotalPrice=guestedCart.totalPrice;
-         console.log("gusetedcart",guestedCart.totalPrice);
-        console.log("gusetedcart2",guestedCart);
-        res.cookie("guestedCart", JSON.stringify(guestedCart), {
+        const totalPrice=guestedCart?.reduce((sum,item)=>sum + item.itemQuantity*item.price,0);
+
+           const cart = {
+              items: guestedCart,
+              totalPrice: totalPrice,
+              originalTotalPrice:totalPrice,
+            };
+         console.log("gusetedcart totalprice",cart.totalPrice);
+        console.log("gusetedcart2",cart);
+        res.cookie("guestedCart", JSON.stringify(cart), {
           expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
               secure: true,
           sameSite: "none",
@@ -86,7 +92,7 @@ cartRouter.post("/cart/addItem", identifyGuestAuth, async (req, res) => {
         // create a cart
         const { name, price, _id, combo, actualPrice } = product;
         const cart = [
-          {
+            {
             itemQuantity: quantity,
             name: name,
             price: price,
@@ -95,9 +101,12 @@ cartRouter.post("/cart/addItem", identifyGuestAuth, async (req, res) => {
             actualPrice: actualPrice,
           },
         ];
-         cart.totalPrice=actualPrice;
-         cart.originalTotalPrice=actualPrice;
-         console.log("cart for first time",cart);
+              const guestedCart = {
+              items: cart,
+              totalPrice: actualPrice,
+              originalTotalPrice:actualPrice,
+            };
+         console.log("cart for first time",guestedCart);
         res.cookie("guestedCart", JSON.stringify(cart), {
           expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
             secure: true,
