@@ -125,7 +125,7 @@ couponRouter.post("/coupon/apply",userAuth,async(req,res)=>{
             data:{
             code,
             discount:cart.discount,
-            discountValue:coupon.discountValue,
+            discountValue:0,
             cart:cart,
             actualTotalPrice: cart.originalTotalPrice,
             totalPrice:cart.totalPrice,
