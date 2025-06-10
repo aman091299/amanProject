@@ -221,7 +221,7 @@ cartRouter.get( "/cart/viewAllCartItems",identifyGuestAuth, async (req, res) => 
           actualPrice: item.productId.actualPrice,
         }));
         const newCart={
-          items,totalPrice:cart.totalPrice,originalTotalPrice:cart.originalTotalPrice
+          items,totalPrice:cart.totalPrice,originalTotalPrice:cart.originalTotalPrice,couponDiscount:cart.discount,
         }
         
         return res.status(200).json({
