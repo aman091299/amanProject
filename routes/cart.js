@@ -65,8 +65,11 @@ cartRouter.post("/cart/addItem", identifyGuestAuth, async (req, res) => {
             });
           }
         }
+         console.log("gusetedcart1",guestedCart);
         guestedCart.totalPrice=guestedCart?.reduce((sum,item)=>sum + item.itemQuantity*item.price,0);
         guestedCart.originalTotalPrice=guestedCart.totalPrice;
+         console.log("gusetedcart",guestedCart.totalPrice);
+        console.log("gusetedcart2",guestedCart);
         res.cookie("guestedCart", JSON.stringify(guestedCart), {
           expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
               secure: true,
