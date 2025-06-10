@@ -67,7 +67,8 @@ paymentRouter.post("/payment/create/order",userAuth,async(req,res)=>{
 
       if (err) {
         return res.status(400).json({
-          messages: "Error in creating order" + err,
+          messages: "Error in creating order" ,
+          error: err?.message || JSON.stringify(err),
           success: false,
         });
     }
