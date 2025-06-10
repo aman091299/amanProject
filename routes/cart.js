@@ -292,7 +292,7 @@ cartRouter.post("/cart/merge", identifyGuestAuth, async (req, res) => {
          }
         return res.status(200).json({
           success: true,
-          data: newCart,
+          data: cartObj,
           message: "Cart merge successfully with guested Item",
         });
       } else {
