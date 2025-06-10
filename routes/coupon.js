@@ -194,7 +194,7 @@ couponRouter.get('/coupon/cart',userAuth,async(req,res)=>{
         })
       }
        return res.status(200).json({
-          data:cart.couponId.code,
+          data:cart?.couponId?.code,
           success:true,
           message:"Coupon fetched successfully"
         })
