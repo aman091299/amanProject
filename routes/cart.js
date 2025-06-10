@@ -67,12 +67,6 @@ cartRouter.post("/cart/addItem", identifyGuestAuth, async (req, res) => {
         }
      
         const totalPrice=guestedCart.items?.reduce((sum,item)=>sum + item.itemQuantity*item.price,0);
-
-          //  const cart = {
-          //     items: guestedCart,
-          //     totalPrice: totalPrice,
-          //     originalTotalPrice:totalPrice,
-          //   };
           guestedCart.totalPrice=totalPrice;
           guestedCart.originalTotalPrice=totalPrice;
 
@@ -194,7 +188,7 @@ cartRouter.get( "/cart/viewAllCartItems",identifyGuestAuth, async (req, res) => 
           ? JSON.parse(req.cookies.guestedCart)
           : [];
         return res.status(200).json({
-          data: {cart,totalPrice:cart.totalPrice},
+          data: {cart},
           success: true,
           message: "Gotten guested cart data successfully",
         });
