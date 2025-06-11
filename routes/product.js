@@ -370,6 +370,9 @@ productRouter.delete("/product/deleteAllProducts",adminAuth,async(req,res)=>{
 productRouter.get("/product/search",userAuth,async(req,res)=>{
   try {
       const searchText=req.query?.searchText?.trim();
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 10;
+      const skip = (page - 1) * limit;
       if(!searchText){
         return res.status(400).json({
           success:false,
@@ -381,10 +384,11 @@ productRouter.get("/product/search",userAuth,async(req,res)=>{
         [{name:{$regex:searchText,$options:'i'}},
         {description:{$regex:searchText,$options:'i'}}
       ]}
-    )
+    ).skip(skip)
+    .limit(limit);
     res.status(200).json({
           success:true,
-          message:"Search query is required",
+          message: "Found " +products.length +" products for " +searchText,
           countProducts: products.length,
           products,
          
