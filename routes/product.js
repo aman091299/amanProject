@@ -381,9 +381,9 @@ productRouter.get("/product/search",userAuth,async(req,res)=>{
         })
       }
 
-      const products=await Product.find({$or:
-        [{name:{$regex:searchText,$options:'i'}},
-      ]}
+      const products=await Product.find(
+        {name:{$regex:searchText,$options:'i'}},
+      
     ).skip(skip)
     .limit(limit);
     res.status(200).json({
