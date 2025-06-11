@@ -372,6 +372,7 @@ productRouter.get("/product/search",userAuth,async(req,res)=>{
       const searchText=req.query?.searchText?.trim();
       const page = parseInt(req.query.page) || 1;
       const limit = parseInt(req.query.limit) || 10;
+      
       const skip = (page - 1) * limit;
       if(!searchText){
         return res.status(400).json({
@@ -382,7 +383,6 @@ productRouter.get("/product/search",userAuth,async(req,res)=>{
 
       const products=await Product.find({$or:
         [{name:{$regex:searchText,$options:'i'}},
-        {description:{$regex:searchText,$options:'i'}}
       ]}
     ).skip(skip)
     .limit(limit);
