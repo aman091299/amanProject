@@ -192,8 +192,12 @@ productRouter.get("/product/viewAllProducts/:categoryName",async (req, res) => {
 productRouter.get("/product/allProductDetails",async(req,res)=>{
 
     try {
+
       console.log("inside product details")
-      const products = await Product.find({}).populate({path:'categoryId',
+
+        const limit = parseInt(req.query.limit) || 30;
+       const skip = parseInt(req.query.skip) || 0;
+      const products = await Product.find({}).skip(skip).limit(limit).populate({path:'categoryId',
                                                         populate:{
                                                           path:'productIds',
                                                            model: 'Product',
@@ -361,6 +365,36 @@ productRouter.delete("/product/deleteAllProducts",adminAuth,async(req,res)=>{
 
 
 
+})
+
+productRouter.get("/product/search",userAuth,async(req,res)=>{
+  try {
+      const searchText=req.query?.searchText?.trim();
+      if(!searchText){
+        return res.status(400).json({
+          success:false,
+          message:"Search query is required"
+        })
+      }
+
+      const products=await Product.find({$or:
+        [{name:{$regex:searchText,$options:'i'}},
+        {description:{$regex:searchText,$options:'i'}}
+      ]}
+    )
+    res.status(200).json({
+          success:true,
+          message:"Search query is required",
+          countProducts: products.length,
+          products,
+         
+        })
+  } catch (error) {
+    res.status(500).json({
+      success:false,
+      message:"Error while search product by name"+ error,
+    })
+  }
 })
 
 
