@@ -138,6 +138,7 @@ authRouter.get('/user/reverseGeocode',async(req,resp)=>{
    
   const lng=req.query.lng;
   const lat=req.query.lat;
+  console.log("Lat:", lat, "Lng:", lng);
  try {
       const res = await fetch(
     `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&zoom=17`
