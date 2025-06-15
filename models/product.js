@@ -16,12 +16,12 @@ const productSchema = mongoose.Schema({
 
   description: {
     type: String,
-    required: true,
+  
     trim:true,
   },
   price: {
     type: Number,
-    required: true,
+   
   },
   stock: {
   type: Number,
@@ -39,7 +39,7 @@ isAvailable: {
   },
   actualPrice: {
     type: Number,
-    required: true,
+  
   },
   image: {
     type: [String],
@@ -138,6 +138,29 @@ isAvailable: {
   //     }
      
   // },
+  metadata:[{
+    key:{
+      type:String,
+      trim:true,
+    },
+    value:{
+      type:String,
+      trim:true,
+    }
+  }],
+  searchEngineSlug:{
+    type:String,
+    trim:true,
+  },
+  searchEngineTitle:{
+    type:String,
+    trim:true,
+  },
+  searchEngineDescription:{
+    type:String,
+    trim:true,
+  },
+  
 
   bestSuitedFor: [ {
     type: String,

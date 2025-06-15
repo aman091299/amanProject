@@ -8,29 +8,31 @@ const productRouter = express.Router();
 
 productRouter.post("/product/create/:categoryName", adminAuth, async (req, res) => {
   try {
+    console.log("inside product create",req.body)
     const items = req.body;
     const {categoryName}=req.params;
+    console.log("categoryName",categoryName)
     const { name, tags, price, description, actualPrice,healthBenefits,cuts, ...rest } =items;
     if (!name) {
       return res
         .status(400)
         .json({ success: false, message: "Name  is required." });
     }
-    if (!description) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Description  is required." });
-    }
-    if (!price) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Price  is required." });
-    }
-    if (!actualPrice) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Actual Price  is required." });
-    }
+    // if (!description) {
+    //   return res
+    //     .status(400)
+    //     .json({ success: false, message: "Description  is required." });
+    // }
+    // if (!price) {
+    //   return res
+    //     .status(400)
+    //     .json({ success: false, message: "Price  is required." });
+    // }
+    // if (!actualPrice) {
+    //   return res
+    //     .status(400)
+    //     .json({ success: false, message: "Actual Price  is required." });
+    // }
 
     if (!categoryName) {
       return res
@@ -39,7 +41,7 @@ productRouter.post("/product/create/:categoryName", adminAuth, async (req, res) 
     }
   
    const catergorySlug = formattedValue(categoryName);
-    
+     console.log("category slug",catergorySlug)
     const category = await Category.findOne({slug: catergorySlug });
   
     if (!category) {
@@ -367,7 +369,7 @@ productRouter.delete("/product/deleteAllProducts",adminAuth,async(req,res)=>{
 
 })
 
-productRouter.get("/product/search",userAuth,async(req,res)=>{
+productRouter.get("/product/search",async(req,res)=>{
   try {
       const searchText=req.query?.searchText?.trim();
       const page = parseInt(req.query.page) || 1;
