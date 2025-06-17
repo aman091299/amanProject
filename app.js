@@ -18,7 +18,8 @@ app.use(cors({
         'http://localhost:3001', 
         'https://ecommerce-frontend-one-fawn.vercel.app',
      'https://ecommerce-frontend-one-fawn.vercel.app/',
-     'https://cambaytiger-dashboard-ixvk-git-main-aman091299s-projects.vercel.app'], 
+     'https://cambaytiger-dashboard-ixvk-git-main-aman091299s-projects.vercel.app',
+     'https://cambaytiger-dashboard-ixvk.vercel.app'], 
     credentials:true,
 }))
 app.use(express.json())
