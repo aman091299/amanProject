@@ -8,6 +8,7 @@ const categoryRouter=require('./routes/category.js');
 const paymentRouter=require('./routes/payment.js');
 const cartRouter=require('./routes/cart.js');
 const couponRouter=require("./routes/coupon.js");
+const sectionRouter=require("./routes/homeSection.js")
 const cookieParser=require('cookie-parser');
 const express=require('express');
 const app=express();
@@ -16,7 +17,8 @@ app.use(cors({
      origin: ['http://localhost:3000',
         'http://localhost:3001', 
         'https://ecommerce-frontend-one-fawn.vercel.app',
-     'https://ecommerce-frontend-one-fawn.vercel.app/'], 
+     'https://ecommerce-frontend-one-fawn.vercel.app/',
+     'https://cambaytiger-dashboard-ixvk-git-main-aman091299s-projects.vercel.app'], 
     credentials:true,
 }))
 app.use(express.json())
@@ -29,6 +31,7 @@ app.use('/',categoryRouter);
 app.use('/',cartRouter);
 app.use('/',paymentRouter);
 app.use('/',couponRouter);
+app.use('/',sectionRouter)
 
 const port=process.env.PORT || 3000;
 
