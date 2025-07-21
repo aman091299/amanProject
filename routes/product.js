@@ -25,7 +25,7 @@ productRouter.post("/Name", async (req, res) => {
   console.log("user",userText)
     const users = await User.find({
       firstName: { $regex: userText, $options: "i" },
-    })
+    }) .select("-password") 
       .skip(skip)
       .limit(limit);
 
